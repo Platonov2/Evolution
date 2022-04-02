@@ -10,7 +10,7 @@ public class DeckMaster : MonoBehaviour
     public GameObject cardPrefab;
     public TMP_Text cardCounter;
 
-    private List<Card> cards = null;
+    public List<Card> cards = null;
 
 
     void Awake()
