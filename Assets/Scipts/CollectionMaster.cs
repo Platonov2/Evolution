@@ -13,8 +13,11 @@ public class CollectionMaster : MonoBehaviour
     {
         Instance = this;
 
-        cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue"));
-        cardCollection.Add(new Card("Parasite-Carnivorous"));
-        cardCollection.Add(new Card("Ñamouflage-Fat_tissue"));
+        cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue-Backimage"));
+        cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue-Backimage"));
+        cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue-Backimage"));
+        cardCollection.Add(new Card("Ñamouflage-Fat_tissue-Backimage_Texture"));
+        cardCollection.Add(new Card("Ñamouflage-Fat_tissue-Backimage_Texture"));
+        cardCollection.Add(new Card("Ñamouflage-Fat_tissue-Backimage_Texture"));
     }
 }

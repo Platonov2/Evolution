@@ -5,12 +5,10 @@ using UnityEngine;
 [System.Serializable]
 public struct Card
 {
-    public string frontSpritePath;
-    public string backSpritePath;
+    public string SpritePath;
 
-    public Card(string frontSpritePath)
+    public Card(string SpritePath)
     {
-        this.frontSpritePath = frontSpritePath;
-        this.backSpritePath = "BackImage";
+        this.SpritePath = SpritePath;
     }
 }

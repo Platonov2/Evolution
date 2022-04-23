@@ -10,7 +10,7 @@ public class DeckMaster : MonoBehaviour
     public GameObject cardPrefab;
     public TMP_Text cardCounter;
 
-    public List<Card> cards = null;
+    public Stack<GameObject> cards = new Stack<GameObject>();
 
 
     void Awake()
@@ -25,30 +25,24 @@ public class DeckMaster : MonoBehaviour
             cardCounter.text = "Кол-во карт: " + cards.Count.ToString();
     }
 
-    // Нажатие мыши обрабатывается только при условии, что на объекте есть коллидер
-    void OnMouseDown()
+
+
+
+    public void FillAndShaffleDeck(List<Card> cards)
     {
-        Debug.Log(1);
-        Shuffle();
-    }
-
-
-
-
-    public void FillDeck(List<Card> cards)
-    {
-        this.cards = cards;
+        var shaffledCards = Shuffle(cards);
 
         int z = 0;
-        foreach (Card card in cards)
+        foreach (Card card in shaffledCards)
         {
-            CreateCardInstance(card, new Vector3(this.transform.position.x, this.transform.position.y, z), Quaternion.identity);
+            var cardInstance = CreateCardInstance(card, new Vector3(this.transform.position.x, this.transform.position.y, z), this.transform.rotation);//.identity);
+            this.cards.Push(cardInstance);
 
             z -= 1;
         }
     }
 
-    public void Shuffle()
+    public List<Card> Shuffle(List<Card> cards)
     {
         System.Random random = new System.Random();
 
@@ -60,31 +54,32 @@ public class DeckMaster : MonoBehaviour
             cards[j] = cards[i];
             cards[i] = temp;
         }
+
+        return cards;
     }
 
-
+    public GameObject GetCard()
+    {
+        return cards.Pop();
+    }
 
 
     // Метод добавления новой карты на сцену
     // Для этого создаётся экземпляр преваба, которому задаются настройки из cardInfo
-    private void CreateCardInstance(Card cardInfo, Vector3 position, Quaternion rotation)
+    private GameObject CreateCardInstance(Card cardInfo, Vector3 position, Quaternion rotation)
     {
         // Создание экземпляра префаба
-        var card = Instantiate(this.cardPrefab.transform, position, rotation);
-        card.name = cardInfo.frontSpritePath;
+        var card = Instantiate(this.cardPrefab, position, rotation);
+        card.name = cardInfo.SpritePath;
+        card.transform.Rotate(-90, 0, 0);
 
         // Перемещение карты в колоду.
         // Второй аргумент отвечает за перерасчёт размеров и координат объекта относительно родителя. Всегда должен быть true
-        card.SetParent(this.transform, true);
+        card.transform.SetParent(this.transform, true);
 
         // Добавление текстур
-        var front = card.Find("Front");
-        var back = card.Find("Back");
+        card.GetComponent<MeshRenderer>().material = Resources.Load<Material>(cardInfo.SpritePath);
 
-        SpriteRenderer frontSprite = front.GetComponent<SpriteRenderer>();
-        SpriteRenderer backSprite = back.GetComponent<SpriteRenderer>();
-
-        frontSprite.sprite = Resources.Load<Sprite>(cardInfo.frontSpritePath);
-        backSprite.sprite = Resources.Load<Sprite>(cardInfo.backSpritePath);
+        return card;
     }
 }
