@@ -16,6 +16,12 @@ public class CollectionMaster : MonoBehaviour
         cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue-Backimage"));
         cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue-Backimage"));
         cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue-Backimage"));
+        cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue-Backimage"));
+        cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue-Backimage"));
+        cardCollection.Add(new Card("Sharp_Vision-Fat_Tissue-Backimage"));
+        cardCollection.Add(new Card("Ñamouflage-Fat_tissue-Backimage_Texture"));
+        cardCollection.Add(new Card("Ñamouflage-Fat_tissue-Backimage_Texture"));
+        cardCollection.Add(new Card("Ñamouflage-Fat_tissue-Backimage_Texture"));
         cardCollection.Add(new Card("Ñamouflage-Fat_tissue-Backimage_Texture"));
         cardCollection.Add(new Card("Ñamouflage-Fat_tissue-Backimage_Texture"));
         cardCollection.Add(new Card("Ñamouflage-Fat_tissue-Backimage_Texture"));

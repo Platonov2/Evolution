@@ -12,12 +12,12 @@ TagManager:
   - Water
   - UI
   - Floor
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - YourCreaturesField
+  - YourCreature
+  - OpponentCreature
+  - OpponentCard
+  - YourHandCard
+  - EmptyCard
   - 
   - 
   - 

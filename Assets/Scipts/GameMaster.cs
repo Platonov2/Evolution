@@ -6,20 +6,21 @@ public class GameMaster : MonoBehaviour
 {
     public static GameMaster Instance { get; private set; }
 
+    public int clientNumber;
+    public Player player0;
     public Player player1;
     public Player player2;
     public Player player3;
-    public Player player4;
     public List<Player> players = new List<Player>();
 
     void Awake()
     {
         Instance = this;
 
+        if (player0 != null) players.Add(player0);
         if (player1 != null) players.Add(player1);
         if (player2 != null) players.Add(player2);
         if (player3 != null) players.Add(player3);
-        if (player4 != null) players.Add(player4);
     }
 
     void Start()
@@ -28,9 +29,19 @@ public class GameMaster : MonoBehaviour
         DeckMaster.Instance.FillAndShaffleDeck(CollectionMaster.Instance.cardCollection);
 
         // Каждый игрок берёт по 6 карт в начале игры
-        foreach (var player in players)
+        /*foreach (var player in players)
         {
-            player.DrawCards(2);
+            player.DrawOpenedCards(2);
+        }*/
+
+        //Debug.Log(players.Count);
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (i == clientNumber)
+            {
+                players[i].DrawCardsToPlayer(5);
+            }
+            else players[i].DrawCardsToOpponent(5);
         }
     }
 }

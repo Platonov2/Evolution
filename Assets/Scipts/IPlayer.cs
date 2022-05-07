@@ -4,5 +4,6 @@ using UnityEngine;
 
 public interface IPlayer
 {
-    public void DrawCards(int numberOfCards);
+    public void DrawCardsToPlayer(int numberOfCards);
+    public void DrawCardsToOpponent(int numberOfCards);
 }

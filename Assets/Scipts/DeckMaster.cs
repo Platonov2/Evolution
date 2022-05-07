@@ -9,6 +9,7 @@ public class DeckMaster : MonoBehaviour
 
     public GameObject cardPrefab;
     public TMP_Text cardCounter;
+    public float speed;
 
     public Stack<GameObject> cards = new Stack<GameObject>();
 
@@ -60,7 +61,11 @@ public class DeckMaster : MonoBehaviour
 
     public GameObject GetCard()
     {
-        return cards.Pop();
+        var card = cards.Pop();
+
+        //card.transform.position = Vector3.MoveTowards(card.transform.position, new Vector3(card.transform.position.x, card.transform.position.y, -50), speed);
+
+        return card;
     }
 
 
@@ -71,7 +76,7 @@ public class DeckMaster : MonoBehaviour
         // Создание экземпляра префаба
         var card = Instantiate(this.cardPrefab, position, rotation);
         card.name = cardInfo.SpritePath;
-        card.transform.Rotate(-90, 0, 0);
+        card.transform.Rotate(-90, 90, 90);
 
         // Перемещение карты в колоду.
         // Второй аргумент отвечает за перерасчёт размеров и координат объекта относительно родителя. Всегда должен быть true
