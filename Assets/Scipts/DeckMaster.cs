@@ -12,7 +12,7 @@ public class DeckMaster : MonoBehaviour
     public float speed;
 
     public Stack<GameObject> cards = new Stack<GameObject>();
-
+    public List<int> formatCards = new List<int>();
 
     void Awake()
     {
@@ -26,9 +26,6 @@ public class DeckMaster : MonoBehaviour
             cardCounter.text = "Кол-во карт: " + cards.Count.ToString();
     }
 
-
-
-
     public void FillAndShaffleDeck(List<CardInfo> cards)
     {
         var shaffledCards = Shuffle(cards);
@@ -38,6 +35,8 @@ public class DeckMaster : MonoBehaviour
         {
             var cardInstance = CreateCardInstance(card, new Vector3(this.transform.position.x, this.transform.position.y, z), this.transform.rotation);//.identity);
             this.cards.Push(cardInstance);
+
+            formatCards.Add(card.ID);
 
             z -= 1;
         }

@@ -6,6 +6,7 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
     public string SpritePath;
+    public int ID;
 
     public IAbility mainAbility;
     public IAbility additionalAbility;

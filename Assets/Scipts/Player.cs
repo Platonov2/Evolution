@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IPlayer
 {
-    public int playerNumber;
     public GameObject hand;
     public GameObject creaturesField;
     public List<GameObject> creatures = new List<GameObject>();
     public GameObject emptyCreaturePrefab;
+
+    public string ID;
+    public string playerName;
 
     public int creatureCount;
 

@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.Threading.Tasks;
+
+
 public class GameMaster : MonoBehaviour
 {
     public static GameMaster Instance { get; private set; }
 
     public int clientNumber;
-    public Player player0;
+    public string roomId;
+    public string roomName;
+
+    public Player current;
     public Player player1;
     public Player player2;
     public Player player3;
@@ -20,7 +26,7 @@ public class GameMaster : MonoBehaviour
     {
         Instance = this;
 
-        if (player0 != null) players.Add(player0);
+        if (current != null) players.Add(current);
         if (player1 != null) players.Add(player1);
         if (player2 != null) players.Add(player2);
         if (player3 != null) players.Add(player3);
