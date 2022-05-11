@@ -12,23 +12,21 @@ public class CardPrefab : MonoBehaviour
     public LayerMask yourCreatureLayer;
     public LayerMask opponentCreatureLayer;
     public LayerMask yourHandCardLayer;
-    public GameObject emptyCard;
-    public GameObject emptyCardPlaceholder;
+    public LayerMask emptyCreatureLayer;
+    public GameObject emptyCreature;
+    public KeyCode changeAbility;
 
     private bool isDrag = false;
     private GameObject choosenCard = null;
     private Vector3 startPosition;
     private float timeHolding;
-    private int emptyCardIndex;
     private Vector3 newCreaturePosition;
 
-
-    TransformController transformController;
+    private Card cardScript;
 
     void Start()
     {
-        transformController = GetComponent<TransformController>();
-        emptyCardIndex = -1;
+        cardScript = GetComponent<Card>();
     }
 
     void Update()
@@ -42,47 +40,12 @@ public class CardPrefab : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, new Vector3(hit.point.x, hit.point.y, -50), speed);
             }
 
-            RaycastHit hitCreaturesField;
-            RaycastHit hitCreature;
-
-            Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitCreaturesField, Mathf.Infinity, yourCreaturesFieldLayer);
-            Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitCreature, Mathf.Infinity, yourCreatureLayer);
-
-            if (hitCreaturesField.collider != null && hitCreature.collider == null)
+            if (Input.GetKey(changeAbility))
             {
-                timeHolding += Time.deltaTime;
-                //Debug.Log(timeHolding);
-
-                if (timeHolding > 0.8 && emptyCardIndex == -1)
-                {
-                    emptyCardIndex = player.GetLastIndex();
-                    player.CreateEmptyCreature(emptyCard, emptyCardIndex);
-                }
-            }
-            else
-            {
-                timeHolding = 0;
-
-                if (emptyCardIndex != -1)
-                {
-                    player.RemoveEmptyCard();
-                    emptyCard.transform.SetParent(emptyCardPlaceholder.transform, true);
-                    emptyCardIndex = -1;
-                }
+                cardScript.ChangeAbility();
             }
         }
     }
-
-    /*void checkCreatureCreation(float deltaTime, Vector3 mousePosition)
-    {
-        this.timeHolding += deltaTime;
-
-        if (timeHolding >= 10)
-        {
-            int index = player.GetNearLeftCardIndex(mousePosition);
-            player.CreateCreature(emptyCard, index);
-        }
-    }*/
 
     // Обработка нажатия на карту
     void OnMouseDown()
@@ -91,7 +54,6 @@ public class CardPrefab : MonoBehaviour
         // Перетягивать можно только свои карты из руки
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, yourHandCardLayer))
         {
-            //Debug.Log(hit.collider.name);
             isDrag = true;
             choosenCard = hit.collider.gameObject;
             startPosition = this.transform.position;
@@ -103,36 +65,36 @@ public class CardPrefab : MonoBehaviour
     {
         RaycastHit hitHandCard;
         RaycastHit hitCreaturesField;
-        RaycastHit hitCreature;
+        RaycastHit hitYourCreature;
+        RaycastHit hitEmptyCreature;
 
         Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitHandCard, Mathf.Infinity, yourHandCardLayer);
         Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitCreaturesField, Mathf.Infinity, yourCreaturesFieldLayer);
-        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitCreature, Mathf.Infinity, yourCreatureLayer);
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitYourCreature, Mathf.Infinity, yourCreatureLayer);
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitEmptyCreature, Mathf.Infinity, emptyCreatureLayer);
 
         if (hitHandCard.collider != null)
         {
-            // Возвращение карты в руку при неверном ходе
-            if (hitCreaturesField.collider == null && hitCreature.collider == null)
-            {
-                //Debug.Log("Старт" + startPosition);
-                //Debug.Log("Текущее положение" + this.transform.position);
-                transform.position = startPosition;
-                //transform.position = Vector3.MoveTowards(this.transform.position, startPosition, speed);
-            }
+            
+            
             // Создание нового существа
-            else if (hitCreaturesField.collider != null && hitCreature.collider == null)
+            if (hitEmptyCreature.collider != null)
             {
-                //StartCoroutine(transformController.MoveTo(new Vector3(yourCreaturesField.transform.position.x, yourCreaturesField.transform.position.y, -1)));
-                newCreaturePosition = emptyCard.transform.position;
-                emptyCard.transform.SetParent(emptyCardPlaceholder.transform, true);
-                //transformController.MoveTo(new Vector3(yourCreaturesField.transform.position.x, yourCreaturesField.transform.position.y, -1));
-                transformController.MoveTo(newCreaturePosition);
-                transformController.FlipCard();
-                //transformController.Wait();
-                //StartCoroutine(WaitAndCreateCreature(2, choosenCard));
-                //player.CreateCreature(choosenCard, 0);
-                //player.CreateCreature(choosenCard, emptyCardIndex, "YourCreature");
                 player.CreateCreature(choosenCard);
+            }
+            else if (hitYourCreature.collider != null)
+            {
+                Creature creatureScript = hitYourCreature.collider.gameObject.GetComponent<Creature>();
+                Card cardScript = GetComponent<Card>();
+
+                if (!creatureScript.HaveAbility(cardScript.GetAbility()))
+                    creatureScript.AddAbility(choosenCard, cardScript.GetAbility());
+                else transform.position = startPosition;
+            }
+            // Возвращение карты в руку при неверном ходе
+            else
+            {
+                transform.position = startPosition;
             }
 
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, -1), speed);
@@ -141,10 +103,4 @@ public class CardPrefab : MonoBehaviour
             choosenCard = null;
         }
     }
-
-    /*public IEnumerator WaitAndCreateCreature(float seconds, GameObject choosenCard)
-    {
-        yield return new WaitForSeconds(seconds);
-        player.CreateCreature(choosenCard, 0, "YourCreature");
-    }*/
 }

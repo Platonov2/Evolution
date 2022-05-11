@@ -8,8 +8,15 @@ public class Player : MonoBehaviour, IPlayer
     public GameObject hand;
     public GameObject creaturesField;
     public List<GameObject> creatures = new List<GameObject>();
+    public GameObject emptyCreaturePrefab;
 
     public int creatureCount;
+
+    void Start()
+    {
+        if (playerNumber == 0)
+            CreateEmptyCreature();
+    }
 
     void Update()
     {
@@ -54,104 +61,26 @@ public class Player : MonoBehaviour, IPlayer
 
     public void CreateCreature(GameObject sourceCard) 
     {
-        var emptyLayer = LayerMask.NameToLayer("EmptyCard");
+        TransformController transformController = sourceCard.GetComponent<TransformController>();
+        
+        transformController.FlipCard();
 
-        for (int i = 0; i < creatures.Count; i++)
-        {
-            if (creatures[i].layer == emptyLayer)
-            {
-                sourceCard.layer = LayerMask.NameToLayer("YourCreature");
-                creatures[i] = sourceCard;
-                sourceCard.transform.SetParent(creaturesField.transform, true);
-                //Debug.Log("Стало" + creatures.Count);
-                return;
-            }
-        }
-        /*
-        //Debug.Log(creatureIndex);
+        creatures.Insert(creatures.Count - 1, sourceCard);
+
+        sourceCard.layer = LayerMask.NameToLayer("YourCreature");
+        sourceCard.AddComponent<Creature>();
+        Creature creatureScript = sourceCard.GetComponent<Creature>();
+        creatureScript.Initialize();
         sourceCard.transform.SetParent(creaturesField.transform, true);
-        //sourceCard.transform.SetSiblingIndex(creaturePosition);
-        //sourceCard.layer = LayerMask.NameToLayer("YourCreature");
-        sourceCard.layer = LayerMask.NameToLayer(layerName);
-        //creatures.Insert(creatureIndex, sourceCard);
-        if (creatures.Count == 0)
-            creatures.Insert(0, sourceCard);
-        else creatures[creatureIndex] = sourceCard;*/
+        sourceCard.transform.SetSiblingIndex(creatures.Count - 2);
     }
 
-    public void CreateEmptyCreature(GameObject emptyCard, int creatureIndex)
+    public void CreateEmptyCreature()
     {
-        creatures.Insert(creatureIndex, emptyCard);
-        emptyCard.transform.SetParent(creaturesField.transform, true);
+        var emptyCreature = Instantiate(emptyCreaturePrefab);
+
+        creatures.Add(emptyCreature);
+        emptyCreature.transform.position = creaturesField.transform.position;
+        emptyCreature.transform.SetParent(creaturesField.transform, true);
     }
-
-    public int GetLastIndex()
-    {
-        return creatures.Count;
-    }
-
-    /*public void DeleteCreature(int creatureIndex)
-    {
-        creatures.RemoveAt(creatureIndex);
-    }*/
-
-    public void RemoveEmptyCard()
-    {
-        //Debug.Log("Удаляем");
-        var emptyLayer = LayerMask.NameToLayer("EmptyCard");
-
-        for (int i = 0; i < creatures.Count; i++)
-        {
-            if (creatures[i].layer == emptyLayer)
-            {
-                creatures.RemoveAt(i);
-                //Debug.Log("Стало" + creatures.Count);
-                return;
-            }
-        }
-    }
-
-    /*public int GetNearLeftCardIndex(Vector3 position)
-    {
-        float minDistance = 1000f;
-        int minDistanceIndex = 0;
-
-        Debug.Log(minDistance);
-
-        for (int i = 0; i < creatures.Count; i++)
-        {
-            float distance = Vector3.Distance(position, creatures[i].transform.position);
-            Debug.Log(distance);
-
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                minDistanceIndex = i;
-                Debug.Log(minDistance);
-            }
-            if (distance > minDistance)
-            {
-                float leftDistance = Vector3.Distance(creatures[i].transform.position, creatures[i - 1].transform.position);
-                float rightDistance = Vector3.Distance(creatures[i].transform.position, creatures[i + 1].transform.position);
-                Debug.Log("Лево  " + leftDistance);
-                Debug.Log("Право " + leftDistance);
-                Debug.Log("Индекс " + leftDistance);
-
-                if (leftDistance < rightDistance)
-                {
-                    Debug.Log("Индекс " + i);
-                    return i;
-                }
-                else
-                {
-                    Debug.Log("Индекс " + (i - 1));
-                    return i - 1;
-                }
-            }
-        }
-
-        Debug.Log("Индекс " + (0));
-
-        return 0;
-    }*/
 }

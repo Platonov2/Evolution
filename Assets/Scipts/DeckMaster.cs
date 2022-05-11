@@ -29,12 +29,12 @@ public class DeckMaster : MonoBehaviour
 
 
 
-    public void FillAndShaffleDeck(List<Card> cards)
+    public void FillAndShaffleDeck(List<CardInfo> cards)
     {
         var shaffledCards = Shuffle(cards);
 
         int z = 0;
-        foreach (Card card in shaffledCards)
+        foreach (CardInfo card in shaffledCards)
         {
             var cardInstance = CreateCardInstance(card, new Vector3(this.transform.position.x, this.transform.position.y, z), this.transform.rotation);//.identity);
             this.cards.Push(cardInstance);
@@ -43,7 +43,7 @@ public class DeckMaster : MonoBehaviour
         }
     }
 
-    public List<Card> Shuffle(List<Card> cards)
+    public List<CardInfo> Shuffle(List<CardInfo> cards)
     {
         System.Random random = new System.Random();
 
@@ -71,11 +71,17 @@ public class DeckMaster : MonoBehaviour
 
     // Метод добавления новой карты на сцену
     // Для этого создаётся экземпляр преваба, которому задаются настройки из cardInfo
-    private GameObject CreateCardInstance(Card cardInfo, Vector3 position, Quaternion rotation)
+    private GameObject CreateCardInstance(CardInfo cardInfo, Vector3 position, Quaternion rotation)
     {
         // Создание экземпляра префаба
         var card = Instantiate(this.cardPrefab, position, rotation);
         card.name = cardInfo.SpritePath;
+
+        Card cardScript = card.GetComponent<Card>();
+        cardScript.SetCardInfo(cardInfo);
+
+        //card.AddComponent<Card>();
+
         card.transform.Rotate(-90, 90, 90);
 
         // Перемещение карты в колоду.

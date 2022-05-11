@@ -6,9 +6,15 @@ public class TransformController : MonoBehaviour
 {
     public float rotationSpeed;
     private int targetAngle;
+    private int targetRotateX;
+    private int targetRotateY;
+    private int targetRotateZ;
     private Quaternion oldAngle;
+    private Quaternion oldRotation;
     private Vector3 targetPosition;
     private bool move = false;
+    private bool flip = false;
+    private bool rotate = false;
 
     void Start()
     {
@@ -18,7 +24,7 @@ public class TransformController : MonoBehaviour
 
     void Update()
     {
-        if (move)
+        if (flip)
         {
             if (System.Math.Abs(transform.eulerAngles.y - targetAngle) > 0.09)
             {
@@ -26,8 +32,23 @@ public class TransformController : MonoBehaviour
                 transform.rotation = Quaternion.Lerp(oldAngle, target, Time.deltaTime * rotationSpeed);
                 oldAngle = transform.rotation;
             }
-            else move = false;
+            else flip = false;
+        }
 
+        if (rotate)
+        {
+            if (System.Math.Abs(transform.eulerAngles.y - targetRotateZ) > 0.09)
+            {
+                //Debug.Log(transform.eulerAngles.x + " " + transform.eulerAngles.y + " " + transform.eulerAngles.z);
+                Quaternion targetRotation = Quaternion.Euler(targetRotateX, targetRotateY, targetRotateZ);
+                transform.rotation = Quaternion.Lerp(oldRotation, targetRotation, Time.deltaTime * rotationSpeed);
+                oldRotation = transform.rotation;
+            }
+            else rotate = false;
+        }
+
+        if (move)
+        {
             if (Vector3.Distance(transform.position, targetPosition) > 0.09)
             {
                 transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * rotationSpeed);
@@ -41,17 +62,31 @@ public class TransformController : MonoBehaviour
         if (targetAngle == 0)
             targetAngle = 180;
         else targetAngle = 0;
-        move = true;
+        flip = true;
+    }
+
+    public void Rotate()
+    {
+        //Debug.Log(targetRotateX + " " + targetRotateY + " " + targetRotateZ);
+        if (targetRotateZ == -90)
+        {
+            targetRotateX = -90;
+            targetRotateY = 0;
+            targetRotateZ = 0;
+            rotate = true;
+        }
+        else
+        {
+            targetRotateX = 90;
+            targetRotateY = 90;
+            targetRotateZ = -90;
+            rotate = true;
+        }
     }
 
     public void MoveTo(Vector3 targetPosition)
     {
         this.targetPosition = targetPosition;
         move = true;
-    }
-
-    public IEnumerator Wait(int seconds)
-    {
-        yield return new WaitForSeconds(seconds);
     }
 }
