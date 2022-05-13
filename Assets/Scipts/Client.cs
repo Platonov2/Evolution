@@ -42,12 +42,15 @@ public class Client : MonoBehaviour
 
             if (act == "CREATE")
             {
-                CreateRoom("1", "Some name");
+                GameMaster.Instance.current.playerName = "1";
+                CreateRoom(GameMaster.Instance.current.playerName,
+                    GameMaster.Instance.roomName);
             }
 
             if (act == "ENTER")
             {
-                EnterRoom("1", "Some name");
+                EnterRoom(GameMaster.Instance.current.playerName, 
+                    GameMaster.Instance.roomId);
             }
         };
 
@@ -66,7 +69,18 @@ public class Client : MonoBehaviour
 
             GreetingMessage mes = JsonUtility.FromJson<GreetingMessage>(str);
 
-            if (mes.players.Count == 2) {
+            if (mes.action == Actions.startGame)
+            {
+                Debug.Log("Starting game...");
+                GameMaster.Instance.StartGame();
+
+                return;
+            }
+
+            if (mes.players.Count == 2)
+            {
+                GameMaster.Instance.player1.playerName = mes.players[1];
+
                 SendInfo(
                     mes.player_id,
                     mes.room_id,

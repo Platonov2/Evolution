@@ -26,14 +26,24 @@ public class GameMaster : MonoBehaviour
     {
         Instance = this;
 
-        if (current != null) players.Add(current);
-        if (player1 != null) players.Add(player1);
-        if (player2 != null) players.Add(player2);
-        if (player3 != null) players.Add(player3);
+        roomName = "Some name";
+
+        clientNumber = 0;
     }
 
     void Start()
     {
+
+    }
+
+    public void StartGame()
+    {
+        Debug.Log(current.playerName);
+        Debug.Log(player1.playerName);
+
+        players.Add(current);
+        players.Add(player1);
+
         // Заполнение колоды
         DeckMaster.Instance.FillAndShaffleDeck(CollectionMaster.Instance.cardCollection);
         FoodBaseMaster.Instance.CreateRedFood(5);

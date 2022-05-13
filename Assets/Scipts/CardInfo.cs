@@ -8,11 +8,13 @@ public class CardInfo
 
     public IAbility mainAbility;
     public IAbility additionalAbility;
+    public int ID;
 
-    public CardInfo(string SpritePath, IAbility mainAbility, IAbility additionalAbility)
+    public CardInfo(string SpritePath, IAbility mainAbility, IAbility additionalAbility, int ID)
     {
         this.SpritePath = SpritePath;
         this.mainAbility = mainAbility;
         this.additionalAbility = additionalAbility;
+        this.ID = ID;
     }
 }

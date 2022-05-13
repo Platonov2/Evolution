@@ -11,6 +11,7 @@ public class Player : MonoBehaviour, IPlayer
 
     public string ID;
     public string playerName;
+    public int playerNumber;
 
     public int creatureCount;
 
