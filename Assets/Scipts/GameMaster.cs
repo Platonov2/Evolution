@@ -27,6 +27,7 @@ public class GameMaster : MonoBehaviour
     {
         // Заполнение колоды
         DeckMaster.Instance.FillAndShaffleDeck(CollectionMaster.Instance.cardCollection);
+        FoodBaseMaster.Instance.CreateFood(5);
 
         // Каждый игрок берёт по 6 карт в начале игры
         /*foreach (var player in players)

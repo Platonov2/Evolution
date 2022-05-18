@@ -18,10 +18,10 @@ TagManager:
   - OpponentCard
   - YourHandCard
   - EmptyCreature
-  - 
-  - 
-  - 
-  - 
+  - Food
+  - Collision
+  - EatenFood
+  - Ability
   - 
   - 
   - 

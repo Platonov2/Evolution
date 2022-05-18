@@ -7,7 +7,6 @@ public class CardPrefab : MonoBehaviour
 {
     public Player player;
     public float speed;
-    public GameObject yourCreaturesField;
     public LayerMask yourCreaturesFieldLayer;
     public LayerMask yourCreatureLayer;
     public LayerMask opponentCreatureLayer;
@@ -51,8 +50,10 @@ public class CardPrefab : MonoBehaviour
     void OnMouseDown()
     {
         RaycastHit hit;
+
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, yourHandCardLayer);
         // Перетягивать можно только свои карты из руки
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, yourHandCardLayer))
+        if (hit.collider != null && hit.collider.gameObject.layer == LayerMask.NameToLayer("YourHandCard"))
         {
             isDrag = true;
             choosenCard = hit.collider.gameObject;
@@ -88,7 +89,10 @@ public class CardPrefab : MonoBehaviour
                 Card cardScript = GetComponent<Card>();
 
                 if (!creatureScript.HaveAbility(cardScript.GetAbility()))
+                {
                     creatureScript.AddAbility(choosenCard, cardScript.GetAbility());
+                    choosenCard.layer = LayerMask.NameToLayer("Ability");
+                }
                 else transform.position = startPosition;
             }
             // Возвращение карты в руку при неверном ходе

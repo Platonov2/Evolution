@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IAbility
 {
-    public void OnPlay();
+    public void OnPlay(Creature creature);
     public void OnEnemyPlay();
     public void OnDestroy();
     public void OnEat();
