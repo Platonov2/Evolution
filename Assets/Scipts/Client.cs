@@ -112,10 +112,18 @@ public class Client : MonoBehaviour
 
         if (mes.action == Actions.initPlayer)
         {
+            if (GameMaster.Instance.roomId == "")
+            {
+                GameMaster.Instance.roomId = mes.room_id;
+                GameMaster.Instance.roomName = mes.room_name;
+            }
             if (GameMaster.Instance.current.ID == "")
             {
                 GameMaster.Instance.current.ID = mes.player_id;
-                GameMaster.Instance.roomId = mes.room_id;
+            } else
+            {
+                GameMaster.Instance.player1.ID = mes.player_id;
+                GameMaster.Instance.player1.playerName = mes.player_name;
             }
 
             if (!GameMaster.Instance.current.isHost)
@@ -154,6 +162,11 @@ public class Client : MonoBehaviour
         {
             Debug.Log("activate player");
             return;
+        }
+
+        if (mes.action == Actions.takeCard)
+        {
+            GameMaster.Instance.TakeCards(mes.player_id, mes.cards_num);
         }
 
         if (mes.action == Actions.placeCard && mes.player_id != GameMaster.Instance.current.ID)
@@ -205,6 +218,23 @@ public class Client : MonoBehaviour
     public void SendInfo(string player_id, string room_id, string act, Body body)
     {
         Message mes = new Message(player_id, room_id, act, body);
+
+        string strJson = JsonUtility.ToJson(mes);
+
+        Debug.Log("format message in send info " + strJson);
+
+        SendWsMessage(strJson);
+
+        if (mes.action == Actions.finishGame)
+        {
+            ConnectionClose();
+        }
+    }
+
+    public void SendInfo(string player_id, string room_id, string act, int num)
+    {
+        Message mes = new Message(player_id, room_id, act, null);
+        mes.cards_num = num;
 
         string strJson = JsonUtility.ToJson(mes);
 

@@ -30,7 +30,7 @@ public class Message
     public string player_id;
     public string room_id;
     public string action;
-    public List<int> deck;
+    public int cards_num;
     public Body body;
 
     public Message(string player_id, string room_id, string act, Body body)
@@ -48,7 +48,6 @@ public class Body
     public int card_id;
     public int card_type;
     public int card_parent;
-    public int cards_num;
 
     public Body(int cardID, int cardType, int cardParent)
     {

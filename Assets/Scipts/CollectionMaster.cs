@@ -65,6 +65,8 @@ public class CollectionMaster : MonoBehaviour
         IAbility sharpVision = new SharpVision(0);
         IAbility camouflage = new Ñamouflage(1);
         IAbility fatTissue = new Fat_Tissue(2);
+        IAbility highBodyWeight = new High_Body_Weight(3);
+        IAbility carnivorous = new Carnivorous(4);
 
         foreach (int cardID in deck)
         {
@@ -78,7 +80,7 @@ public class CollectionMaster : MonoBehaviour
             }
             if (cardID == 2)
             {
-                cardCollection.Add(new CardInfo("Ñamouflage-Fat_tissue-Backimage_Texture", camouflage, fatTissue, cardID));
+                cardCollection.Add(new CardInfo("High_Body_Weight-Carnivorous", highBodyWeight, carnivorous, 2));
             }
         }
 
