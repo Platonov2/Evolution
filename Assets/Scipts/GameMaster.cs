@@ -38,9 +38,6 @@ public class GameMaster : MonoBehaviour
 
     public void StartGame()
     {
-        Debug.Log(current.playerName);
-        Debug.Log(player1.playerName);
-
         players.Add(current);
         players.Add(player1);
 

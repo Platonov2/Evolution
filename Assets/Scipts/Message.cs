@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class GreetingMessage
 {
     public string player_id;
@@ -22,19 +24,16 @@ public class GreetingMessage
     }
 }
 
-public class PlayerInfo
-{
-    string player_name;
-}
-
+[Serializable]
 public class Message
 {
     public string player_id;
     public string room_id;
     public string action;
-    public string body;
+    public List<int> deck;
+    public Body body;
 
-    public Message(string player_id, string room_id, string act, string body)
+    public Message(string player_id, string room_id, string act, Body body)
     {
         this.player_id = player_id;
         this.room_id = room_id;
@@ -43,15 +42,35 @@ public class Message
     }
 }
 
+[Serializable]
+public class Body
+{
+    public int card_id;
+    public int card_type;
+    public int card_parent;
+    public int cards_num;
+
+    public Body(int cardID, int cardType, int cardParent)
+    {
+        this.card_id = cardID;
+        this.card_type = cardType;
+        this.card_parent = cardParent;
+    }
+}
+
 public static class Actions
 {
     public const string createRoom = "CREATE_ROOM";
     public const string enterRoom = "ENTER_ROOM";
-    public const string startGame = "START_GAME";
     public const string finishGame = "FINISH_ROOM";
     public const string reEnterRoom = "RE_ENTER_ROOM";
 
+    public const string takeCard = "TAKE_CARD";
+    public const string startGame = "START_GAME";
     public const string placeCard = "PLACE_CARD";
+    public const string placeFood = "PLACE_FOOD";
+    public const string attack = "ATTACK";
+    public const string feed = "FEED";
 
     public const string initPlayer = "INIT_PLAYER";
     public const string activatePlayer = "ACTIVATE_PLAYER";

@@ -12,4 +12,5 @@ public interface IAbility
     public void OnAttack();
     public bool CanDefend(Creature attakingCreature);
     public void OnDie();
+    public int GetAbility();
 }

@@ -431,6 +431,49 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &493564563
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 493564565}
+  - component: {fileID: 493564564}
+  m_Layer: 0
+  m_Name: Client
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &493564564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493564563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08bbfe2f16162e64db48a59096cb6a32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &493564565
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493564563}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -870,11 +913,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 710e61d7ce3574b43b7cab56319d3b2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerNumber: 0
   hand: {fileID: 142663852}
   creaturesField: {fileID: 1721379566}
   creatures: []
   emptyCreaturePrefab: {fileID: 122321204}
+  ID: 
+  isHost: 0
+  playerName: 1
+  playerNumber: 0
   creatureCount: 0
 --- !u!1 &657297992
 GameObject:
@@ -1048,7 +1094,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clientNumber: 0
-  player0: {fileID: 605484605}
+  roomId: 
+  roomName: 
+  current: {fileID: 605484605}
   player1: {fileID: 887516263}
   player2: {fileID: 0}
   player3: {fileID: 0}
@@ -1099,11 +1147,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 710e61d7ce3574b43b7cab56319d3b2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerNumber: 1
   hand: {fileID: 657297992}
-  creaturesField: {fileID: 0}
+  creaturesField: {fileID: 1297670687}
   creatures: []
-  emptyCreaturePrefab: {fileID: 0}
+  emptyCreaturePrefab: {fileID: 122321204}
+  ID: 
+  isHost: 0
+  playerName: 
+  playerNumber: 1
   creatureCount: 0
 --- !u!1 &897889065
 GameObject:
@@ -1354,6 +1405,7 @@ MonoBehaviour:
   cardPrefab: {fileID: 1656494923772264978}
   cardCounter: {fileID: 600684770}
   speed: 0
+  formatCards: 
 --- !u!212 &1265876580
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1652,6 +1704,7 @@ GameObject:
   - component: {fileID: 1721379569}
   - component: {fileID: 1721379568}
   - component: {fileID: 1721379570}
+  - component: {fileID: 1721379571}
   m_Layer: 7
   m_Name: Creatures
   m_TagString: Untagged
@@ -1768,6 +1821,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 6.76, y: 9.91, z: 0.2}
   m_Center: {x: 0, y: 0.0000009536743, z: 0}
+<<<<<<< HEAD
 --- !u!1 &1824176478
 GameObject:
   m_ObjectHideFlags: 0
@@ -1803,11 +1857,15 @@ CapsuleCollider:
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940698}
 --- !u!114 &1824176480
+=======
+--- !u!114 &1721379571
+>>>>>>> 0ff2c4c (Place card to opponent and init deck)
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+<<<<<<< HEAD
   m_GameObject: {fileID: 1824176478}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -1887,6 +1945,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+=======
+  m_GameObject: {fileID: 1721379566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd7a2124894fee5479e13efad7dac782, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+>>>>>>> 0ff2c4c (Place card to opponent and init deck)
 --- !u!1 &1884842409
 GameObject:
   m_ObjectHideFlags: 0
@@ -2179,4 +2245,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpritePath: 
+  ID: 0
   isMainAbility: 0

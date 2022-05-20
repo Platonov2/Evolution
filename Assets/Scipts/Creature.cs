@@ -7,6 +7,7 @@ public class Creature : MonoBehaviour
     public List<IAbility> abilities;
     public List<GameObject> abilityCards;
     public List<GameObject> foodTokens;
+
     public int hunger = 1;
 
     public bool carnivorous = false;
@@ -16,6 +17,8 @@ public class Creature : MonoBehaviour
 
     public bool canAttack = false;
     public FoodBaseMaster foodBaseMaster;
+
+    public int ID;
 
     public void Initialize()
     {
@@ -35,6 +38,15 @@ public class Creature : MonoBehaviour
         abilityCard.transform.localPosition = new Vector3(0, 0, abilityCards.Count * 1.5f);
         
         ability.OnPlay(this);
+
+        Body b = new Body(0, 2, ID);
+        Debug.Log(b.card_type);
+        Client.Instance.SendInfo(GameMaster.Instance.current.ID,
+                                 GameMaster.Instance.roomId,
+                                 Actions.placeCard,
+                                 b);
+
+        Debug.Log("Added ability");
     }
 
     public void Die()

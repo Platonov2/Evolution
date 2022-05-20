@@ -10,7 +10,6 @@ public class Client : MonoBehaviour
     public static Client Instance { get; private set; }
 
     private WebSocket websocket;
-    public bool isReady;
 
     void Start()
     {
@@ -33,23 +32,34 @@ public class Client : MonoBehaviour
     async public void StartConnection(string act)
     {
         websocket = new WebSocket("ws://localhost:2567/ws");
+        //GameMaster.Instance.StartGame();
 
         websocket.OnOpen += () =>
         {
             Debug.Log("Connection open!");
 
-            isReady = true;
-
             if (act == "CREATE")
             {
+                // Заполнение колоды
+                CollectionMaster.Instance.Init();
+
                 GameMaster.Instance.current.playerName = "1";
+                GameMaster.Instance.current.isHost = true;
                 CreateRoom(GameMaster.Instance.current.playerName,
                     GameMaster.Instance.roomName);
             }
 
             if (act == "ENTER")
             {
+                GameMaster.Instance.current.isHost = false;
                 EnterRoom(GameMaster.Instance.current.playerName, 
+                    GameMaster.Instance.roomId);
+            }
+
+            if (act == "REENTER")
+            {
+                GameMaster.Instance.current.isHost = false;
+                ReEnterRoom(GameMaster.Instance.current.playerName,
                     GameMaster.Instance.roomId);
             }
         };
@@ -57,8 +67,6 @@ public class Client : MonoBehaviour
         websocket.OnError += (e) =>
         {
             Debug.Log("Broken connection " + e);
-
-            isReady = false;
         };
 
         websocket.OnMessage += (bytes) =>
@@ -67,29 +75,93 @@ public class Client : MonoBehaviour
 
             Debug.Log("get mes: " + str);
 
-            GreetingMessage mes = JsonUtility.FromJson<GreetingMessage>(str);
 
-            if (mes.action == Actions.startGame)
+            GreetingMessage gmes = JsonUtility.FromJson<GreetingMessage>(str);
+            Debug.Log("greet player name" + gmes.player_name);
+
+            if ((gmes != null && gmes.players.Count != 0) || gmes.role)
             {
-                Debug.Log("Starting game...");
-                GameMaster.Instance.StartGame();
-
+                ProcessGreeting(gmes);
                 return;
             }
 
-            if (mes.players.Count == 2)
-            {
-                GameMaster.Instance.player1.playerName = mes.players[1];
+            Message mes = JsonUtility.FromJson<Message>(str);
 
-                SendInfo(
-                    mes.player_id,
-                    mes.room_id,
-                    Actions.startGame,
-                    "");
+            if (mes != null)
+            {
+                ProcessMessage(mes);
+                return;
             }
         };
 
         await websocket.Connect();
+    }
+
+    private void ProcessGreeting(GreetingMessage mes)
+    {
+        Debug.Log("greeting");
+
+        if (mes.action == Actions.startGame)
+        {
+            Debug.Log("Starting game...");
+
+            GameMaster.Instance.StartGame();
+
+            return;
+        }
+
+        if (mes.action == Actions.initPlayer)
+        {
+            if (GameMaster.Instance.current.ID == "")
+            {
+                GameMaster.Instance.current.ID = mes.player_id;
+                GameMaster.Instance.roomId = mes.room_id;
+            }
+
+            if (!GameMaster.Instance.current.isHost)
+            {
+                CollectionMaster.Instance.Create(mes.deck);
+            }
+        }
+
+        if (mes.players.Count == 2 && GameMaster.Instance.current.isHost)
+        {
+            GameMaster.Instance.player1.playerName = mes.players[1];
+
+            Body b = new Body(0, 0, 0);
+            SendInfo(
+                mes.player_id,
+                mes.room_id,
+                Actions.startGame,
+                b);
+        }
+    }
+
+    private void ProcessMessage(Message mes)
+    {
+        Debug.Log("message");
+
+        if (mes.action == Actions.startGame)
+        {
+            Debug.Log("Starting game...");
+
+            GameMaster.Instance.StartGame();
+
+            return;
+        }
+
+        if (mes.action == Actions.activatePlayer)
+        {
+            Debug.Log("activate player");
+            return;
+        }
+
+        if (mes.action == Actions.placeCard && mes.player_id != GameMaster.Instance.current.ID)
+        {
+            Debug.Log("placing card");
+            GameMaster.Instance.player1.PlaceCardToOpponent(mes.body.card_id, mes.body.card_parent, mes.body.card_type);
+            return;
+        }
     }
 
     public void CreateRoom(string playerID, string RoomName)
@@ -97,7 +169,7 @@ public class Client : MonoBehaviour
 
         GreetingMessage mes = new GreetingMessage(playerID, Actions.createRoom, true);
         mes.room_name = RoomName;
-        mes.deck = DeckMaster.Instance.formatCards;
+        mes.deck = CollectionMaster.Instance.GetOrders();
 
         string strJson = JsonUtility.ToJson(mes);
 
@@ -118,15 +190,32 @@ public class Client : MonoBehaviour
         SendWsMessage(strJson);
     }
 
-    private void SendInfo(string player_id, string room_id, string act, string body)
+    public void ReEnterRoom(string playerID, string RoomId)
+    {
+        GreetingMessage mes = new GreetingMessage(playerID, Actions.reEnterRoom, false);
+        mes.room_id = RoomId;
+
+        string strJson = JsonUtility.ToJson(mes);
+
+        Debug.Log("format message in enter " + strJson);
+
+        SendWsMessage(strJson);
+    }
+
+    public void SendInfo(string player_id, string room_id, string act, Body body)
     {
         Message mes = new Message(player_id, room_id, act, body);
 
         string strJson = JsonUtility.ToJson(mes);
 
-        Debug.Log("format message in info " + strJson);
+        Debug.Log("format message in send info " + strJson);
 
         SendWsMessage(strJson);
+
+        if (mes.action == Actions.finishGame)
+        {
+            ConnectionClose();
+        }
     }
 
     private bool SendWsMessage(string mes)

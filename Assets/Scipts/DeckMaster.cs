@@ -26,12 +26,15 @@ public class DeckMaster : MonoBehaviour
             cardCounter.text = "Кол-во карт: " + cards.Count.ToString();
     }
 
-    public void FillAndShaffleDeck(List<CardInfo> cards)
+    public void FillDeck(List<CardInfo> cards)
     {
-        var shaffledCards = Shuffle(cards);
+        this.cards.Clear();
+        this.formatCards.Clear();
+
+        Debug.Log("collection cards " + cards.Count);
 
         int z = 0;
-        foreach (CardInfo card in shaffledCards)
+        foreach (CardInfo card in cards)
         {
             var cardInstance = CreateCardInstance(card, new Vector3(this.transform.position.x, this.transform.position.y, z), this.transform.rotation);//.identity);
             this.cards.Push(cardInstance);
@@ -60,13 +63,13 @@ public class DeckMaster : MonoBehaviour
 
     public GameObject GetCard()
     {
-        var card = cards.Pop();
+        var card = this.cards.Pop();
+        formatCards.RemoveAt(formatCards.Count - 1);
 
         //card.transform.position = Vector3.MoveTowards(card.transform.position, new Vector3(card.transform.position.x, card.transform.position.y, -50), speed);
 
         return card;
     }
-
 
     // Метод добавления новой карты на сцену
     // Для этого создаётся экземпляр преваба, которому задаются настройки из cardInfo

@@ -29,8 +29,10 @@ public class TransformController : MonoBehaviour
     {
         if (flip)
         {
+            Debug.Log("flipping " + (transform.eulerAngles.y - targetAngle));
             if (System.Math.Abs(transform.eulerAngles.y - targetAngle) > 0.09)
             {
+                Debug.Log("flipping card");
                 Quaternion target = Quaternion.Euler(270, targetAngle, 0);
                 transform.rotation = Quaternion.Lerp(oldAngle, target, Time.deltaTime * rotationSpeed);
                 oldAngle = transform.rotation;
@@ -42,6 +44,7 @@ public class TransformController : MonoBehaviour
         {
             if (System.Math.Abs(transform.eulerAngles.y - targetRotateZ) > 0.09)
             {
+                Debug.Log("rotating card");
                 //Debug.Log(transform.eulerAngles.x + " " + transform.eulerAngles.y + " " + transform.eulerAngles.z);
                 Quaternion targetRotation = Quaternion.Euler(targetRotateX, targetRotateY, targetRotateZ);
                 transform.rotation = Quaternion.Lerp(oldRotation, targetRotation, Time.deltaTime * rotationSpeed);
@@ -52,6 +55,7 @@ public class TransformController : MonoBehaviour
 
         if (move)
         {
+            Debug.Log("moving card");
             if (Vector3.Distance(transform.position, targetPosition) > 0.09)
             {
                 transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * rotationSpeed);
@@ -72,21 +76,22 @@ public class TransformController : MonoBehaviour
 
     public void Rotate()
     {
-        //Debug.Log(targetRotateX + " " + targetRotateY + " " + targetRotateZ);
         if (targetRotateZ == -90)
         {
             targetRotateX = -90;
             targetRotateY = 0;
             targetRotateZ = 0;
-            rotate = true;
         }
         else
         {
             targetRotateX = 90;
             targetRotateY = 90;
             targetRotateZ = -90;
-            rotate = true;
         }
+
+        rotate = true;
+
+        Debug.Log("rotate " + targetRotateX + " " + targetRotateY + " " + targetRotateZ);
     }
 
     public void MoveTo(Vector3 targetPosition)

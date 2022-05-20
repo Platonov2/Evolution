@@ -10,6 +10,7 @@ public class Player : MonoBehaviour, IPlayer
     public GameObject emptyCreaturePrefab;
 
     public string ID;
+    public bool isHost;
     public string playerName;
     public int playerNumber;
 
@@ -66,7 +67,38 @@ public class Player : MonoBehaviour, IPlayer
         }
     }
 
-    public void CreateCreature(GameObject sourceCard)
+    public void PlaceCardToOpponent(int cardID, int cardParent, int cardType)
+    {
+        if (cardType == 1)
+        {
+            Debug.Log("placing creature");
+            DrawCardToOpponent(cardID);
+        } 
+        if (cardType == 2) {
+            Debug.Log("placing ability");
+
+        }
+    }
+
+    public void DrawCardToOpponent(int cardID)
+    {
+        var hand = this.transform.Find("Hand");
+        GameObject sourceCard = new GameObject();
+
+        sourceCard = hand.transform.GetChild(0).gameObject;
+
+        creatures.Insert(creatures.Count, sourceCard);
+
+        sourceCard.layer = LayerMask.NameToLayer("OpponentCreature");
+        sourceCard.AddComponent<Creature>();
+        Creature creatureScript = sourceCard.GetComponent<Creature>();
+        creatureScript.Initialize();
+        sourceCard.transform.SetParent(creaturesField.transform, true);
+
+        Debug.Log("Created opponent creature");
+    }
+
+    public void CreateCreature(GameObject sourceCard) 
     {
         TransformController transformController = sourceCard.GetComponent<TransformController>();
         
@@ -80,6 +112,15 @@ public class Player : MonoBehaviour, IPlayer
         creatureScript.Initialize();
         sourceCard.transform.SetParent(creaturesField.transform, true);
         sourceCard.transform.SetSiblingIndex(creatures.Count - 2);
+
+        Body b = new Body(creatureScript.ID, 1, -1);
+        Debug.Log(b.card_type);
+        Client.Instance.SendInfo(GameMaster.Instance.current.ID,
+                                 GameMaster.Instance.roomId,
+                                 Actions.placeCard,
+                                 b);
+
+        Debug.Log("Created creature");
     }
 
     public void DestroyCreature(GameObject creature)
