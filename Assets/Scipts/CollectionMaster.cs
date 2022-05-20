@@ -189,6 +189,7 @@ public class High_Body_Weight : IAbility
         return !attakingCreature.highBodyWeight;
     }
     public void OnDie() { }
+    public int GetAbility() { return ID; }
 }
 
 public class Carnivorous : IAbility
@@ -212,4 +213,5 @@ public class Carnivorous : IAbility
     public void OnAttack() { }
     public bool CanDefend(Creature attakingCreature) { return false; }
     public void OnDie() { }
+    public int GetAbility() { return ID; }
 }
