@@ -10,5 +10,6 @@ public interface IAbility
     public void OnEat();
     public void OnUse();
     public void OnAttack();
-    public void OnDefend();
+    public bool CanDefend(Creature attakingCreature);
+    public void OnDie();
 }

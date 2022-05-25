@@ -12,6 +12,8 @@ public class Food : MonoBehaviour
     private GameObject choosenFood = null;
     private bool isDrag = false;
     private Vector3 startPosition;
+    private bool move = false;
+    private Vector3 targetPosition;
 
     void Update()
     {
@@ -25,6 +27,15 @@ public class Food : MonoBehaviour
             {
                 transform.position = Vector3.MoveTowards(transform.position, new Vector3(hit.point.x, hit.point.y, -1), speed);
             }
+        }
+
+        if (move)
+        {
+            if (Vector3.Distance(transform.position, targetPosition) > 0.09)
+            {
+                transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * speed);
+            }
+            else move = false;
         }
     }
      
@@ -54,7 +65,12 @@ public class Food : MonoBehaviour
 
             if (creatureScript.StillHunger())
             {
-                creatureScript.Feed(choosenFood);
+                TransformController transformController = hitYourCreature.collider.gameObject.GetComponent<TransformController>();
+                CardPrefab cardPrefab = hitYourCreature.collider.gameObject.GetComponent<CardPrefab>();
+
+                creatureScript.FeedRed(choosenFood);
+                transformController.DisableHighLiteRed();
+                CardPrefab.attackingCreature = null;
                 transform.position = new Vector3(transform.position.x, transform.position.y, 0);
                 choosenFood.layer = LayerMask.NameToLayer("EatenFood");
                 startPosition = transform.position;
@@ -67,6 +83,11 @@ public class Food : MonoBehaviour
         }
 
         isDrag = false;
-        
+    }
+
+    public void MoveTo(Vector3 targetPosition)
+    {
+        this.targetPosition = targetPosition;
+        move = true;
     }
 }

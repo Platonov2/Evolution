@@ -15,11 +15,14 @@ public class TransformController : MonoBehaviour
     private bool move = false;
     private bool flip = false;
     private bool rotate = false;
+    private bool blockYellow = false;
 
     void Start()
     {
-        targetAngle = 0;
+        targetAngle = 180;
         targetPosition = this.transform.position;
+        var material = this.gameObject.GetComponent<Renderer>().material;
+        material.EnableKeyword("_EMISSION");
     }
 
     void Update()
@@ -59,6 +62,8 @@ public class TransformController : MonoBehaviour
 
     public void FlipCard()
     {
+        //Debug.Log(transform.eulerAngles.x + " " + transform.eulerAngles.y + " " + transform.eulerAngles.z);
+
         if (targetAngle == 0)
             targetAngle = 180;
         else targetAngle = 0;
@@ -88,5 +93,42 @@ public class TransformController : MonoBehaviour
     {
         this.targetPosition = targetPosition;
         move = true;
+    }
+
+    public void EnableHighLiteRed()
+    {
+        var material = this.gameObject.GetComponent<Renderer>().material;
+
+        //Debug.Log("6");
+        material.SetColor("_EmissionColor", new Color(0.2f, 0, 0));
+        blockYellow = true;
+    }
+
+    public void DisableHighLiteRed()
+    {
+        var material = this.gameObject.GetComponent<Renderer>().material;
+
+        material.SetColor("_EmissionColor", new Color(0.0f, 0, 0));
+        blockYellow = false;
+    }
+
+    public void EnableHighLiteYellow()
+    {
+        if (!blockYellow)
+        {
+            var material = this.gameObject.GetComponent<Renderer>().material;
+
+            material.SetColor("_EmissionColor", new Color(0.2f, 0.2f, 0));
+        }
+    }
+
+    public void DisableHighLiteYellow()
+    {
+        if (!blockYellow)
+        {
+            var material = this.gameObject.GetComponent<Renderer>().material;
+
+            material.SetColor("_EmissionColor", new Color(0.0f, 0, 0));
+        }
     }
 }

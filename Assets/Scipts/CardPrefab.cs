@@ -14,12 +14,15 @@ public class CardPrefab : MonoBehaviour
     public LayerMask emptyCreatureLayer;
     public GameObject emptyCreature;
     public KeyCode changeAbility;
+    public KeyCode escape;
 
     private bool isDrag = false;
     private GameObject choosenCard = null;
     private Vector3 startPosition;
     private float timeHolding;
     private Vector3 newCreaturePosition;
+    public static GameObject attackingCreature;
+    public GameObject hoveredCreature;
 
     private Card cardScript;
 
@@ -44,20 +47,110 @@ public class CardPrefab : MonoBehaviour
                 cardScript.ChangeAbility();
             }
         }
+
+        RaycastHit hitYourCreature;
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitYourCreature, Mathf.Infinity, yourCreatureLayer);
+
+        if (hitYourCreature.collider != null)// && attackingCreature == null)
+        {
+            Creature creatureScript = hitYourCreature.collider.gameObject.GetComponent<Creature>();
+
+            // Если выбран хищник, то подсвечиваются только те существа, которых он может съесть
+            if (attackingCreature != null && attackingCreature != this)
+            {
+                Creature attackerScript = attackingCreature.GetComponent<Creature>();
+                bool canEat = attackerScript.CanEat(hitYourCreature.collider.gameObject);
+
+                if (canEat)
+                {
+                    TransformController transformController = hitYourCreature.collider.gameObject.GetComponent<TransformController>();
+                    transformController.EnableHighLiteYellow();
+                    hoveredCreature = hitYourCreature.collider.gameObject;
+                }
+            }
+            // Подсветка карты жёлтым цветом при наведении на готового к атаке хищника
+            if (creatureScript.CanAttack())
+            {
+                TransformController transformController = hitYourCreature.collider.gameObject.GetComponent<TransformController>();
+                transformController.EnableHighLiteYellow();
+                hoveredCreature = hitYourCreature.collider.gameObject;
+            }
+        }
+        // Отключение жёлтой подсветки при исчезновении курсора
+        else if (hitYourCreature.collider == null && hoveredCreature != null)// && attackingCreature == null)
+        {
+            TransformController transformController = hoveredCreature.GetComponent<TransformController>();
+            hoveredCreature = null;
+            transformController.DisableHighLiteYellow();
+        }
+
+        // При нажатии на Esc происхдит снятие выделение атакующего существа
+        if (Input.GetKey(escape))
+        {
+            TransformController transformController = attackingCreature.GetComponent<TransformController>();
+            transformController.DisableHighLiteRed();
+            attackingCreature = null;
+        }
     }
 
     // Обработка нажатия на карту
     void OnMouseDown()
     {
-        RaycastHit hit;
+        RaycastHit hitHandCard;
+        RaycastHit hitYourCreature;
+        RaycastHit hitOpponentCreature;
 
-        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, yourHandCardLayer);
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitHandCard, Mathf.Infinity, yourHandCardLayer);
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitYourCreature, Mathf.Infinity, yourCreatureLayer);
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitOpponentCreature, Mathf.Infinity, opponentCreatureLayer);
+
         // Перетягивать можно только свои карты из руки
-        if (hit.collider != null && hit.collider.gameObject.layer == LayerMask.NameToLayer("YourHandCard"))
+        if (hitHandCard.collider != null)
         {
             isDrag = true;
-            choosenCard = hit.collider.gameObject;
+            choosenCard = hitHandCard.collider.gameObject;
             startPosition = this.transform.position;
+        }
+
+        // Одиночное нажатие на существо
+        if (hitYourCreature.collider != null)
+        {
+            Creature creatureScript = hitYourCreature.collider.gameObject.GetComponent<Creature>();
+            TransformController transformController = hitYourCreature.collider.gameObject.GetComponent<TransformController>();
+
+            // Если выбрано атакующее существо, то его атака и выделение снимается
+            if (hitYourCreature.collider.gameObject == attackingCreature)
+            {
+                transformController.DisableHighLiteRed();
+                attackingCreature = null;
+            }
+            // Если выбрано существо со способностью "хищник", то оно становится атакующим и выделяется красным цветом
+            else if (creatureScript.CanAttack())
+            {
+                attackingCreature = hitYourCreature.collider.gameObject;
+                transformController.EnableHighLiteRed();
+            }
+        }
+
+        // Если хищник атакует, то при нажатии на другое существо оно становится жертвой
+        if ((hitOpponentCreature.collider != null || (hitYourCreature.collider != null && attackingCreature != null && hitYourCreature.collider.gameObject != attackingCreature)))
+        {
+            Creature creatureScript = attackingCreature.GetComponent<Creature>();
+
+            // Нападение на своё существо
+            if (hitOpponentCreature.collider != null)
+            {
+                creatureScript.Attack(hitOpponentCreature.collider.gameObject);
+            }
+            // Нападение на существо оппонента
+            else if (hitYourCreature.collider != null)
+            {
+                creatureScript.Attack(hitYourCreature.collider.gameObject);
+            }
+
+            attackingCreature = null;
+
+            creatureScript.Attack(hitYourCreature.collider.gameObject);
         }
     }
 
@@ -76,13 +169,12 @@ public class CardPrefab : MonoBehaviour
 
         if (hitHandCard.collider != null)
         {
-            
-            
-            // Создание нового существа
+            // Если перетянуть карту на место создания нового существа, то создастся новое существо (-_-)
             if (hitEmptyCreature.collider != null)
             {
                 player.CreateCreature(choosenCard);
             }
+            // Если перетянуть карту на своё существо, то она сыграется в качестве способности
             else if (hitYourCreature.collider != null)
             {
                 Creature creatureScript = hitYourCreature.collider.gameObject.GetComponent<Creature>();

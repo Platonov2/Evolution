@@ -38,42 +38,49 @@ public class SharpVision: IAbility
 {
     public void OnPlay(Creature creature)
     {
-        Debug.Log(this);
+        creature.sharpVision = true;
     }
     public void OnEnemyPlay() { }
     public void OnDestroy() { }
     public void OnEat() { }
     public void OnUse() { }
     public void OnAttack() { }
-    public void OnDefend() { }
+    public bool CanDefend(Creature attakingCreature) { return false; }
+    public void OnDie() { }
 }
 
 public class Ñamouflage : IAbility
 {
     public void OnPlay(Creature creature)
     {
-        Debug.Log(this);
+        creature.camouflage = true;
     }
     public void OnEnemyPlay() { }
     public void OnDestroy() { }
     public void OnEat() { }
     public void OnUse() { }
     public void OnAttack() { }
-    public void OnDefend() { }
+    public bool CanDefend(Creature attakingCreature)
+    {
+        Debug.Log(!attakingCreature.sharpVision + " Ñamouflage");
+        return !attakingCreature.sharpVision;
+    }
+    public void OnDie() { }
 }
 
 public class Fat_Tissue : IAbility
 {
     public void OnPlay(Creature creature)
     {
-        Debug.Log(this);
+        //Debug.Log(this);
     }
     public void OnEnemyPlay() { }
     public void OnDestroy() { }
     public void OnEat() { }
     public void OnUse() { }
     public void OnAttack() { }
-    public void OnDefend() { }
+    public bool CanDefend(Creature attakingCreature) { return false; }
+    public void OnDie() { }
 }
 
 public class High_Body_Weight : IAbility
@@ -81,14 +88,20 @@ public class High_Body_Weight : IAbility
     public void OnPlay(Creature creature)
     {
         creature.hunger += 1;
-        Debug.Log(this);
+        creature.highBodyWeight = true;
+        //Debug.Log(this);
     }
     public void OnEnemyPlay() { }
     public void OnDestroy() { }
     public void OnEat() { }
     public void OnUse() { }
     public void OnAttack() { }
-    public void OnDefend() { }
+    public bool CanDefend(Creature attakingCreature)
+    {
+        Debug.Log(!attakingCreature.highBodyWeight + " High_Body_Weight");
+        return !attakingCreature.highBodyWeight;
+    }
+    public void OnDie() { }
 }
 
 public class Carnivorous : IAbility
@@ -96,12 +109,15 @@ public class Carnivorous : IAbility
     public void OnPlay(Creature creature)
     {
         creature.hunger += 1;
-        Debug.Log(this);
+        creature.carnivorous = true;
+        creature.canAttack = true;
+        //Debug.Log(this);
     }
     public void OnEnemyPlay() { }
     public void OnDestroy() { }
     public void OnEat() { }
     public void OnUse() { }
     public void OnAttack() { }
-    public void OnDefend() { }
+    public bool CanDefend(Creature attakingCreature) { return false; }
+    public void OnDie() { }
 }

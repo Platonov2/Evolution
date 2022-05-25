@@ -33,12 +33,16 @@ public class Player : MonoBehaviour, IPlayer
             //card.transform.rotation = Quaternion.Euler(-90, -90, 90);
 
             TransformController transformController = card.GetComponent<TransformController>();
-            transformController.MoveTo(new Vector3(hand.transform.position.x, hand.transform.position.y, -1));
-            transformController.FlipCard();
+
+            // Карты "схлапываются" из-за этой строчки
+            //transformController.MoveTo(new Vector3(hand.transform.position.x, hand.transform.position.y, -1));
 
             card.transform.SetParent(hand, true);
-            card.transform.position = hand.transform.position;
-            card.transform.position = Vector3.MoveTowards(card.transform.position, new Vector3(hand.transform.position.x, hand.transform.position.y, -1), 10);
+
+            transformController.FlipCard();
+
+            //card.transform.position = hand.transform.position;
+            //card.transform.position = Vector3.MoveTowards(card.transform.position, new Vector3(hand.transform.position.x, hand.transform.position.y, -1), 10);
 
             card.layer = LayerMask.NameToLayer("YourHandCard");
         }
@@ -53,13 +57,13 @@ public class Player : MonoBehaviour, IPlayer
             var card = DeckMaster.Instance.GetCard();
 
             card.transform.SetParent(hand, true);
-            card.transform.position = Vector3.MoveTowards(card.transform.position, new Vector3(hand.transform.position.x, hand.transform.position.y, -1), 10);
+            //card.transform.position = Vector3.MoveTowards(card.transform.position, new Vector3(hand.transform.position.x, hand.transform.position.y, -1), 10);
 
             card.layer = LayerMask.NameToLayer("OpponentCard");
         }
     }
 
-    public void CreateCreature(GameObject sourceCard) 
+    public void CreateCreature(GameObject sourceCard)
     {
         TransformController transformController = sourceCard.GetComponent<TransformController>();
         
@@ -73,6 +77,11 @@ public class Player : MonoBehaviour, IPlayer
         creatureScript.Initialize();
         sourceCard.transform.SetParent(creaturesField.transform, true);
         sourceCard.transform.SetSiblingIndex(creatures.Count - 2);
+    }
+
+    public void DestroyCreature(GameObject creature)
+    {
+        creatures.Remove(creature);
     }
 
     public void CreateEmptyCreature()

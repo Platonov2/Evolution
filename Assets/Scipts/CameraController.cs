@@ -16,8 +16,8 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-        this.transform.position = new Vector3(-1983, -1700, -1500);
-        //this.transform.position = new Vector3(-1983, -1100, -1000);
+        //this.transform.position = new Vector3(-1983, -1700, -1500);
+        this.transform.position = new Vector3(-1983, -1100, -2500);
         //this.transform.rotation = new Quaternion(-20, 0, 0, 1);
         this.transform.Rotate(-22, 0, 0);
     }

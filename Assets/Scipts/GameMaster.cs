@@ -13,6 +13,9 @@ public class GameMaster : MonoBehaviour
     public Player player3;
     public List<Player> players = new List<Player>();
 
+    public KeyCode TestKey;
+    private bool working = false;
+
     void Awake()
     {
         Instance = this;
@@ -27,22 +30,40 @@ public class GameMaster : MonoBehaviour
     {
         // Заполнение колоды
         DeckMaster.Instance.FillAndShaffleDeck(CollectionMaster.Instance.cardCollection);
-        FoodBaseMaster.Instance.CreateFood(5);
+        FoodBaseMaster.Instance.CreateRedFood(5);
+    }
 
-        // Каждый игрок берёт по 6 карт в начале игры
-        /*foreach (var player in players)
+    void Update()
+    {
+        if (Input.GetKey(TestKey))
         {
-            player.DrawOpenedCards(2);
-        }*/
+            // Каждый игрок берёт по 6 карт в начале игры
+            /*foreach (var player in players)
+            {
+                player.DrawOpenedCards(2);
+            }*/
 
-        //Debug.Log(players.Count);
+            //Debug.Log(players.Count);
+            if (!working)
+            {
+                StartCoroutine(ExampleCoroutine());
+            }
+        }
+    }
+
+    IEnumerator ExampleCoroutine()
+    {
+        working = true;
+        yield return new WaitForSeconds(0.5f);
+
         for (int i = 0; i < players.Count; i++)
         {
             if (i == clientNumber)
             {
-                players[i].DrawCardsToPlayer(5);
+                players[i].DrawCardsToPlayer(6);
             }
-            else players[i].DrawCardsToOpponent(5);
+            else players[i].DrawCardsToOpponent(6);
         }
+        working = false;
     }
 }
