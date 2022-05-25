@@ -80,7 +80,7 @@ public class CollectionMaster : MonoBehaviour
             }
             if (cardID == 2)
             {
-                cardCollection.Add(new CardInfo("High_Body_Weight-Carnivorous", highBodyWeight, carnivorous, 2));
+                cardCollection.Add(new CardInfo("High_Body_Weight-Carnivorous", highBodyWeight, carnivorous, cardID));
             }
         }
 

@@ -48,12 +48,14 @@ public class Body
     public int card_id;
     public int card_type;
     public int card_parent;
+    public bool is_main_ability;
 
-    public Body(int cardID, int cardType, int cardParent)
+    public Body(int cardID, int cardType, int cardParent, bool is_main_ability)
     {
         this.card_id = cardID;
         this.card_type = cardType;
         this.card_parent = cardParent;
+        this.is_main_ability = is_main_ability;
     }
 }
 
@@ -64,9 +66,9 @@ public static class Actions
     public const string finishGame = "FINISH_ROOM";
     public const string reEnterRoom = "RE_ENTER_ROOM";
 
-    public const string takeCard = "TAKE_CARD";
     public const string startGame = "START_GAME";
     public const string placeCard = "PLACE_CARD";
+    public const string takeCard = "TAKE_CARD";
     public const string placeFood = "PLACE_FOOD";
     public const string attack = "ATTACK";
     public const string feed = "FEED";

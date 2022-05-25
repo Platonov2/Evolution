@@ -182,7 +182,7 @@ public class CardPrefab : MonoBehaviour
 
                 if (!creatureScript.HaveAbility(cardScript.GetAbility()))
                 {
-                    creatureScript.AddAbility(choosenCard, cardScript.GetAbility());
+                    creatureScript.AddAbilityToPlayer(choosenCard, cardScript.GetAbility());
                     choosenCard.layer = LayerMask.NameToLayer("Ability");
                 }
                 else transform.position = startPosition;

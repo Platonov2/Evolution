@@ -25,6 +25,7 @@ public class Card : MonoBehaviour
         this.SpritePath = cardInfo.SpritePath;
         this.mainAbility = cardInfo.mainAbility;
         this.additionalAbility = cardInfo.additionalAbility;
+        this.ID = cardInfo.ID;
         isMainAbility = true;
     }
 
@@ -37,6 +38,14 @@ public class Card : MonoBehaviour
             else isMainAbility = true;
 
             transformController.Rotate();
+        }
+    }
+
+    public void SyncAbility(bool isMainAbility)
+    {
+        if (isMainAbility != this.isMainAbility)
+        {
+            ChangeAbility();
         }
     }
 

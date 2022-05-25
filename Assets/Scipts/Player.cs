@@ -67,25 +67,77 @@ public class Player : MonoBehaviour, IPlayer
         }
     }
 
-    public void PlaceCardToOpponent(int cardID, int cardParent, int cardType)
+    public void PlaceCardToOpponent(int cardID, int cardParent, int cardType, bool isMainAbility)
     {
         if (cardType == 1)
         {
             Debug.Log("placing creature");
-            DrawCardToOpponent(cardID);
+            DrawCreatureToOpponent(cardID);
         } 
         if (cardType == 2) {
             Debug.Log("placing ability");
-
+            DrawAbilityToOpponent(cardID, cardParent, isMainAbility);
         }
     }
 
-    public void DrawCardToOpponent(int cardID)
+    private void DrawAbilityToOpponent(int cardID, int parent, bool isMainAbility)
+    {
+        var hand = this.transform.Find("Hand");
+
+        foreach (Transform child in hand.transform)
+        {
+            if (null == child)
+                continue;
+
+            Card abilityCard = child.gameObject.GetComponent<Card>();
+
+            if (abilityCard.ID == cardID)
+            {
+                Debug.Log("find ability with " + cardID);
+                SetAbilityToParent(abilityCard, child, cardID, parent, isMainAbility);
+                return;
+            }
+        }
+    }
+
+    private void SetAbilityToParent(Card card, Transform child, int cardID, int parent, bool isMainAbility)
+    {
+        TransformController transformController = child.gameObject.GetComponent<TransformController>();
+        transformController.FlipCard();
+
+        card.SyncAbility(isMainAbility);
+        IAbility ability = card.GetAbility();
+
+        GameObject abilityCard = new GameObject();
+
+        abilityCard = child.gameObject;
+
+        var creatures = this.transform.Find("Creatures");
+
+        Transform parenCard = creatures.transform.GetChild(parent);
+        Card targetCard = parenCard.gameObject.GetComponent<Card>();
+        Creature creature = targetCard.GetComponent<Creature>();
+        creature.AddAbilityToOpponent(abilityCard, ability);
+    }
+
+    private void DrawCreatureToOpponent(int cardID)
     {
         var hand = this.transform.Find("Hand");
         GameObject sourceCard = new GameObject();
 
-        sourceCard = hand.transform.GetChild(0).gameObject;
+        foreach (Transform child in hand.transform)
+        {
+            if (null == child)
+                continue;
+
+            Card card = child.gameObject.GetComponent<Card>();
+            if (card.ID == cardID)
+            {
+                Debug.Log("find creature with " + cardID);
+                sourceCard = child.gameObject;
+                break;
+            }
+        }
 
         creatures.Insert(creatures.Count, sourceCard);
 
@@ -101,7 +153,7 @@ public class Player : MonoBehaviour, IPlayer
     public void CreateCreature(GameObject sourceCard) 
     {
         TransformController transformController = sourceCard.GetComponent<TransformController>();
-        
+
         transformController.FlipCard();
 
         creatures.Insert(creatures.Count - 1, sourceCard);
@@ -110,10 +162,13 @@ public class Player : MonoBehaviour, IPlayer
         sourceCard.AddComponent<Creature>();
         Creature creatureScript = sourceCard.GetComponent<Creature>();
         creatureScript.Initialize();
+        creatureScript.SetPos();
         sourceCard.transform.SetParent(creaturesField.transform, true);
         sourceCard.transform.SetSiblingIndex(creatures.Count - 2);
 
-        Body b = new Body(creatureScript.ID, 1, -1);
+        Card card = sourceCard.GetComponent<Card>();
+
+        Body b = new Body(card.ID, 1, -1, false);
         Debug.Log(b.card_type);
         Client.Instance.SendInfo(GameMaster.Instance.current.ID,
                                  GameMaster.Instance.roomId,

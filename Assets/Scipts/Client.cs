@@ -77,7 +77,6 @@ public class Client : MonoBehaviour
 
 
             GreetingMessage gmes = JsonUtility.FromJson<GreetingMessage>(str);
-            Debug.Log("greet player name" + gmes.player_name);
 
             if ((gmes != null && gmes.players.Count != 0) || gmes.role)
             {
@@ -99,14 +98,9 @@ public class Client : MonoBehaviour
 
     private void ProcessGreeting(GreetingMessage mes)
     {
-        Debug.Log("greeting");
-
         if (mes.action == Actions.startGame)
         {
-            Debug.Log("Starting game...");
-
             GameMaster.Instance.StartGame();
-
             return;
         }
 
@@ -122,6 +116,7 @@ public class Client : MonoBehaviour
                 GameMaster.Instance.current.ID = mes.player_id;
             } else
             {
+                Debug.Log("setting id to opponent " + mes.player_id);
                 GameMaster.Instance.player1.ID = mes.player_id;
                 GameMaster.Instance.player1.playerName = mes.player_name;
             }
@@ -136,7 +131,7 @@ public class Client : MonoBehaviour
         {
             GameMaster.Instance.player1.playerName = mes.players[1];
 
-            Body b = new Body(0, 0, 0);
+            Body b = new Body(0, 0, 0, false);
             SendInfo(
                 mes.player_id,
                 mes.room_id,
@@ -147,14 +142,9 @@ public class Client : MonoBehaviour
 
     private void ProcessMessage(Message mes)
     {
-        Debug.Log("message");
-
         if (mes.action == Actions.startGame)
         {
-            Debug.Log("Starting game...");
-
             GameMaster.Instance.StartGame();
-
             return;
         }
 
@@ -171,8 +161,7 @@ public class Client : MonoBehaviour
 
         if (mes.action == Actions.placeCard && mes.player_id != GameMaster.Instance.current.ID)
         {
-            Debug.Log("placing card");
-            GameMaster.Instance.player1.PlaceCardToOpponent(mes.body.card_id, mes.body.card_parent, mes.body.card_type);
+            GameMaster.Instance.player1.PlaceCardToOpponent(mes.body.card_id, mes.body.card_parent, mes.body.card_type, mes.body.is_main_ability);
             return;
         }
     }

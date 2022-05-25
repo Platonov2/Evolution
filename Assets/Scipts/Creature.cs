@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public static class CardHandCounter
+{
+    public static int counter = 0;
+}
+
 public class Creature : MonoBehaviour
 {
     public List<IAbility> abilities;
@@ -19,6 +24,7 @@ public class Creature : MonoBehaviour
     public FoodBaseMaster foodBaseMaster;
 
     public int ID;
+    public int pos;
 
     public void Initialize()
     {
@@ -28,7 +34,50 @@ public class Creature : MonoBehaviour
         foodTokens = new List<GameObject>();
     }
 
-    public void AddAbility(GameObject abilityCard, IAbility ability)
+    public void SetPos()
+    {
+        pos = CardHandCounter.counter;
+        CardHandCounter.counter += 1;
+    }
+
+    public void AddAbilityToOpponent(GameObject abilityCard, IAbility ability)
+    {
+        abilityCards.Add(abilityCard);
+        abilities.Add(ability);
+
+        abilityCard.transform.SetParent(transform, true);
+        transform.position = new Vector3(transform.position.x, transform.position.y + 3, transform.position.z - 1);
+        abilityCard.transform.localPosition = new Vector3(0, abilityCards.Count * 2.0f, abilityCards.Count * 1.5f);
+
+        ability.OnPlay(this);
+
+        Debug.Log("Added ability");
+    }
+
+    public void AddAbilityToPlayer(GameObject abilityCard, IAbility ability)
+    {
+        abilityCards.Add(abilityCard);
+        abilities.Add(ability);
+
+        abilityCard.transform.SetParent(transform, true);
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1);
+        abilityCard.transform.localPosition = new Vector3(0, 0, abilityCards.Count * 1.5f);
+
+        ability.OnPlay(this);
+
+        Card card = abilityCard.GetComponent<Card>();
+
+        Body b = new Body(card.ID, 2, pos, card.isMainAbility);
+        Debug.Log(b.card_type);
+        Client.Instance.SendInfo(GameMaster.Instance.current.ID,
+                                 GameMaster.Instance.roomId,
+                                 Actions.placeCard,
+                                 b);
+
+        Debug.Log("Added ability");
+    }
+
+    private void AddAbility(GameObject abilityCard, IAbility ability)
     {
         abilityCards.Add(abilityCard);
         abilities.Add(ability);
@@ -39,7 +88,9 @@ public class Creature : MonoBehaviour
         
         ability.OnPlay(this);
 
-        Body b = new Body(0, 2, ID);
+        Card card = abilityCard.GetComponent<Card>();
+
+        Body b = new Body(card.ID, 2, pos, card.isMainAbility);
         Debug.Log(b.card_type);
         Client.Instance.SendInfo(GameMaster.Instance.current.ID,
                                  GameMaster.Instance.roomId,
