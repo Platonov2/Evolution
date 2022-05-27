@@ -22,8 +22,6 @@ public class Creature : MonoBehaviour
 
     public bool canAttack = false;
     public FoodBaseMaster foodBaseMaster;
-
-    public int ID;
     public int pos;
 
     public void Initialize()

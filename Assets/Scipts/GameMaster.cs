@@ -19,9 +19,6 @@ public class GameMaster : MonoBehaviour
     public Player player3;
     public List<Player> players = new List<Player>();
 
-    public KeyCode TestKey;
-    private bool working = false;
-
     void Awake()
     {
         Instance = this;
@@ -42,54 +39,13 @@ public class GameMaster : MonoBehaviour
         players.Add(player1);
 
         // Заполнение колоды
-        DeckMaster.Instance.FillAndShaffleDeck(CollectionMaster.Instance.cardCollection);
+        DeckMaster.Instance.FillDeck(CollectionMaster.Instance.cardCollection);
         FoodBaseMaster.Instance.CreateRedFood(5);
-    }
-
-    void Update()
-    {
-        if (Input.GetKey(TestKey))
-        {
-            // Каждый игрок берёт по 6 карт в начале игры
-            /*foreach (var player in players)
-            {
-                player.DrawOpenedCards(2);
-            }*/
-
-            //Debug.Log(players.Count);
-            if (!working)
-            {
-                StartCoroutine(ExampleCoroutine());
-            }
-        }
-    }
-
-    IEnumerator ExampleCoroutine()
-    {
-        working = true;
-        yield return new WaitForSeconds(0.5f);
 
         Client.Instance.SendInfo(GameMaster.Instance.current.ID,
                                  GameMaster.Instance.roomId,
                                  Actions.takeCard,
                                  5);
-
-        /*players[clientNumber].DrawCardsToPlayer(5);
-
-        for (int i = 0; i < players.Count; i++)
-        {
-            if (i == clientNumber)
-            {
-                Debug.Log("draw cards for player " + players[i].ID);
-                players[i].DrawCardsToPlayer(5);
-            }
-            else
-            {
-                Debug.Log("draw cards for opponent " + players[i].ID);
-                players[i].DrawCardsToOpponent(5);
-            }
-        }*/
-        working = false;
     }
 
     public void TakeCards(string playerID, int num)

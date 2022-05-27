@@ -18,11 +18,11 @@ public class CollectionMaster : MonoBehaviour
     {
         cardCollection.Clear();
 
-        IAbility sharpVision = new SharpVision(0);
-        IAbility camouflage = new Ñamouflage(1);
-        IAbility fatTissue = new Fat_Tissue(2);
-        IAbility highBodyWeight = new High_Body_Weight(3);
-        IAbility carnivorous = new Carnivorous(4);
+        IAbility sharpVision = new SharpVision();
+        IAbility camouflage = new Ñamouflage();
+        IAbility fatTissue = new Fat_Tissue();
+        IAbility highBodyWeight = new High_Body_Weight();
+        IAbility carnivorous = new Carnivorous();
 
         cardCollection.Add(new CardInfo("Sharp_Vision-Fat_Tissue-Backimage", sharpVision, fatTissue, 0));
         cardCollection.Add(new CardInfo("Sharp_Vision-Fat_Tissue-Backimage", sharpVision, fatTissue, 0));
@@ -62,11 +62,11 @@ public class CollectionMaster : MonoBehaviour
     {
         cardCollection.Clear();
 
-        IAbility sharpVision = new SharpVision(0);
-        IAbility camouflage = new Ñamouflage(1);
-        IAbility fatTissue = new Fat_Tissue(2);
-        IAbility highBodyWeight = new High_Body_Weight(3);
-        IAbility carnivorous = new Carnivorous(4);
+        IAbility sharpVision = new SharpVision();
+        IAbility camouflage = new Ñamouflage();
+        IAbility fatTissue = new Fat_Tissue();
+        IAbility highBodyWeight = new High_Body_Weight();
+        IAbility carnivorous = new Carnivorous();
 
         foreach (int cardID in deck)
         {
@@ -102,11 +102,6 @@ public class CollectionMaster : MonoBehaviour
 
 public class SharpVision: IAbility
 {
-    public int ID;
-    public SharpVision(int ID)
-    {
-        this.ID = ID;
-    }
     public void OnPlay(Creature creature)
     {
         creature.sharpVision = true;
@@ -118,16 +113,10 @@ public class SharpVision: IAbility
     public void OnAttack() { }
     public bool CanDefend(Creature attakingCreature) { return false; }
     public void OnDie() { }
-    public int GetAbility() { return ID; }
 }
 
 public class Ñamouflage : IAbility
 {
-    int ID;
-    public Ñamouflage(int ID)
-    {
-        this.ID = ID;
-    }
     public void OnPlay(Creature creature)
     {
         creature.camouflage = true;
@@ -143,16 +132,10 @@ public class Ñamouflage : IAbility
         return !attakingCreature.sharpVision;
     }
     public void OnDie() { }
-    public int GetAbility() { return ID; }
 }
 
 public class Fat_Tissue : IAbility
 {
-    int ID;
-    public Fat_Tissue(int ID)
-    {
-        this.ID = ID;
-    }
     public void OnPlay(Creature creature)
     {
         //Debug.Log(this);
@@ -164,16 +147,10 @@ public class Fat_Tissue : IAbility
     public void OnAttack() { }
     public bool CanDefend(Creature attakingCreature) { return false; }
     public void OnDie() { }
-    public int GetAbility() { return ID; }
 }
 
 public class High_Body_Weight : IAbility
 {
-    int ID;
-    public High_Body_Weight(int ID)
-    {
-        this.ID = ID;
-    }
     public void OnPlay(Creature creature)
     {
         creature.hunger += 1;
@@ -191,16 +168,10 @@ public class High_Body_Weight : IAbility
         return !attakingCreature.highBodyWeight;
     }
     public void OnDie() { }
-    public int GetAbility() { return ID; }
 }
 
 public class Carnivorous : IAbility
 {
-    int ID;
-    public Carnivorous(int ID)
-    {
-        this.ID = ID;
-    }
     public void OnPlay(Creature creature)
     {
         creature.hunger += 1;
@@ -215,5 +186,4 @@ public class Carnivorous : IAbility
     public void OnAttack() { }
     public bool CanDefend(Creature attakingCreature) { return false; }
     public void OnDie() { }
-    public int GetAbility() { return ID; }
 }
