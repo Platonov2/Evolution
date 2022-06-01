@@ -13,6 +13,10 @@ public class Creature : MonoBehaviour
     public bool camouflage = false;
     public bool highBodyWeight = false; 
     public bool sharpVision = false;
+    public bool parasite = false;
+    public bool borrowing = false;
+    public bool poisonous = false;
+    public bool swimming = false;
 
     public bool canAttack = false;
     public FoodBaseMaster foodBaseMaster;
@@ -37,12 +41,13 @@ public class Creature : MonoBehaviour
         ability.OnPlay(this);
     }
 
-    public void Die()
+    public void Die(GameObject killerCreature)
     {
         foreach (var ability in abilities)
         {
-            ability.OnDie();
+            ability.OnDie(killerCreature);
         }
+        Destroy(this.gameObject);
     }
 
     public void Attack(GameObject victimCreature)
@@ -56,7 +61,9 @@ public class Creature : MonoBehaviour
 
             Player playerScript = transform.parent.transform.parent.GetComponent<Player>();
             playerScript.DestroyCreature(victimCreature);
-            Destroy(victimCreature);
+            //Destroy(victimCreature);
+            Creature victimController = victimCreature.GetComponent<Creature>();
+            victimController.Die(this.gameObject);
         }
     }
 
@@ -70,15 +77,15 @@ public class Creature : MonoBehaviour
         {
             foreach (var ability in victimController.abilities)
             {
-                canDefend = ability.CanDefend(this);
+                canDefend = ability.CanDefend(this, victimController);
             }
         }
         return !canDefend;
     }
 
-    public bool HaveAbility(IAbility ability)
+    public bool CanAddAbility(IAbility ability)
     {
-        return abilities.Contains(ability);
+        return ability.CanPlay(this);
     }
 
     public bool CanAttack()
@@ -94,6 +101,15 @@ public class Creature : MonoBehaviour
     public void FeedRed(GameObject foodToken)
     {
         foodTokens.Add(foodToken);
+
+        foreach (var ability in abilities)
+        {
+            var playerObject = this.gameObject.transform.parent.transform.parent;
+            Debug.Log(playerObject);
+            Player player = playerObject.GetComponent<Player>();
+
+            ability.OnEat(this, player);
+        }
 
         foodToken.transform.SetParent(transform, true);
     }
@@ -113,7 +129,6 @@ public class Creature : MonoBehaviour
                 blueToken.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z + 3 + i * 2.5f);
             }
             else break;
-            //foodController.MoveTo(transform.position);
         }
     }
 }

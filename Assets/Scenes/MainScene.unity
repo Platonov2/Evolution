@@ -222,7 +222,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9164f28c316ee8540977b8e05ac35ec1, type: 2}
+  - {fileID: 2100000, guid: 2e8d5992b6d22a34b9a6f808440aae96, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -875,6 +875,7 @@ MonoBehaviour:
   creaturesField: {fileID: 1721379566}
   creatures: []
   emptyCreaturePrefab: {fileID: 122321204}
+  cardPrefab: {fileID: 1656494923772264978}
   creatureCount: 0
 --- !u!1 &657297992
 GameObject:
@@ -1104,6 +1105,7 @@ MonoBehaviour:
   creaturesField: {fileID: 0}
   creatures: []
   emptyCreaturePrefab: {fileID: 0}
+  cardPrefab: {fileID: 1656494923772264978}
   creatureCount: 0
 --- !u!1 &897889065
 GameObject:

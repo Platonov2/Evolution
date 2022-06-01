@@ -55,6 +55,18 @@ public class CardPrefab : MonoBehaviour
         {
             Creature creatureScript = hitYourCreature.collider.gameObject.GetComponent<Creature>();
 
+            if (attackingCreature == null && choosenCard != null)
+            {
+                Card cardScript = GetComponent<Card>();
+
+                if (creatureScript.CanAddAbility(cardScript.GetAbility()))
+                {
+                    TransformController transformController = hitYourCreature.collider.gameObject.GetComponent<TransformController>();
+                    transformController.EnableHighLiteYellow();
+                    hoveredCreature = hitYourCreature.collider.gameObject;
+                }
+            }
+
             // Если выбран хищник, то подсвечиваются только те существа, которых он может съесть
             if (attackingCreature != null && attackingCreature != this)
             {
@@ -148,9 +160,12 @@ public class CardPrefab : MonoBehaviour
                 creatureScript.Attack(hitYourCreature.collider.gameObject);
             }
 
-            attackingCreature = null;
+            TransformController transformController = attackingCreature.GetComponent<TransformController>();
+            transformController.DisableHighLiteRed();
 
             creatureScript.Attack(hitYourCreature.collider.gameObject);
+
+            attackingCreature = null;
         }
     }
 
@@ -161,11 +176,13 @@ public class CardPrefab : MonoBehaviour
         RaycastHit hitCreaturesField;
         RaycastHit hitYourCreature;
         RaycastHit hitEmptyCreature;
+        RaycastHit hitOpponentCreature;
 
         Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitHandCard, Mathf.Infinity, yourHandCardLayer);
         Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitCreaturesField, Mathf.Infinity, yourCreaturesFieldLayer);
         Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitYourCreature, Mathf.Infinity, yourCreatureLayer);
         Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitEmptyCreature, Mathf.Infinity, emptyCreatureLayer);
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitOpponentCreature, Mathf.Infinity, emptyCreatureLayer);
 
         if (hitHandCard.collider != null)
         {
@@ -174,16 +191,32 @@ public class CardPrefab : MonoBehaviour
             {
                 player.CreateCreature(choosenCard);
             }
-            // Если перетянуть карту на своё существо, то она сыграется в качестве способности
-            else if (hitYourCreature.collider != null)
+            // Если перетянуть карту на существо, то она сыграется в качестве способности
+            else if (hitYourCreature.collider != null || hitOpponentCreature.collider != null)
             {
-                Creature creatureScript = hitYourCreature.collider.gameObject.GetComponent<Creature>();
+                Creature creatureScript = null;
+                TransformController transformController = null;
+
+                // Узнаём на чьё существо была сыграна способность
+                if (hitYourCreature.collider != null)
+                {
+                    creatureScript = hitYourCreature.collider.gameObject.GetComponent<Creature>();
+                    transformController = hitYourCreature.collider.gameObject.GetComponent<TransformController>();
+                }
+                else if (hitOpponentCreature.collider != null)
+                {
+                    creatureScript = hitOpponentCreature.collider.gameObject.GetComponent<Creature>();
+                    transformController = hitOpponentCreature.collider.gameObject.GetComponent<TransformController>();
+                }
+
                 Card cardScript = GetComponent<Card>();
 
-                if (!creatureScript.HaveAbility(cardScript.GetAbility()))
+                if (creatureScript.CanAddAbility(cardScript.GetAbility()))
                 {
                     creatureScript.AddAbility(choosenCard, cardScript.GetAbility());
                     choosenCard.layer = LayerMask.NameToLayer("Ability");
+
+                    transformController.DisableHighLiteYellow();
                 }
                 else transform.position = startPosition;
             }

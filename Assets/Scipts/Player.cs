@@ -9,6 +9,7 @@ public class Player : MonoBehaviour, IPlayer
     public GameObject creaturesField;
     public List<GameObject> creatures = new List<GameObject>();
     public GameObject emptyCreaturePrefab;
+    public GameObject cardPrefab;
 
     public int creatureCount;
 
@@ -79,6 +80,24 @@ public class Player : MonoBehaviour, IPlayer
         sourceCard.transform.SetSiblingIndex(creatures.Count - 2);
     }
 
+    public void CreateCreatureAndFeed()
+    {
+        var card = Instantiate(this.cardPrefab);
+        //card.transform.Rotate(-90, 90, 90);
+
+        creatures.Insert(creatures.Count - 1, card);
+
+        card.layer = LayerMask.NameToLayer("YourCreature");
+
+        card.AddComponent<Creature>();
+        Creature creatureScript = card.GetComponent<Creature>();
+        creatureScript.Initialize();
+        creatureScript.FeedBlue(1);
+
+        card.transform.SetParent(creaturesField.transform, true);
+        card.transform.SetSiblingIndex(creatures.Count - 2);
+    }
+
     public void DestroyCreature(GameObject creature)
     {
         creatures.Remove(creature);
@@ -91,5 +110,20 @@ public class Player : MonoBehaviour, IPlayer
         creatures.Add(emptyCreature);
         emptyCreature.transform.position = creaturesField.transform.position;
         emptyCreature.transform.SetParent(creaturesField.transform, true);
+    }
+
+    public int CalculateScore()
+    {
+        int finalScore = 0;
+        foreach (var creature in creatures)
+        {
+            Creature creatureController = creature.GetComponent<Creature>();
+
+            finalScore += 2; // +2 за выжившее существо
+            finalScore += creatureController.abilities.Count; // +1 за каждое свойство
+            finalScore += creatureController.hunger - 1; // +1 за каждое увеличение потребности в еде
+        }
+
+        return finalScore;
     }
 }
