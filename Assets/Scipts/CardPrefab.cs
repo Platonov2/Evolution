@@ -9,6 +9,7 @@ public class CardPrefab : MonoBehaviour
     public float speed;
     public LayerMask yourCreaturesFieldLayer;
     public LayerMask yourCreatureLayer;
+    public LayerMask yourCreatureBlockedLayer;
     public LayerMask opponentCreatureLayer;
     public LayerMask yourHandCardLayer;
     public LayerMask emptyCreatureLayer;

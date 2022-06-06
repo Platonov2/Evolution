@@ -33,6 +33,12 @@ public class FoodBaseMaster : MonoBehaviour
         }
     }
 
+    public GameObject GetRedFood()
+    {
+        var food = this.transform.Find("RedFoodPrefab(Clone)").gameObject;
+        return food;
+    }
+
     public GameObject GetBlueFood()
     {
         var food = Instantiate(blueFoodPrefab);

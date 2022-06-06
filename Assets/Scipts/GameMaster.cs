@@ -64,16 +64,16 @@ public class GameMaster : MonoBehaviour
         }
     }
 
-    private int FindPlayer(string playerID)
+    public Player FindPlayer(string playerID)
     {
         for (int i = 0; i < players.Count; i++)
         {
             if (players[i].ID == playerID)
             {
-                return i;
+                return players[i];
             }
         }
 
-        return -1;
+        return null;
     }
 }

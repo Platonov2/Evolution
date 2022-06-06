@@ -2,11 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class CardHandCounter
-{
-    public static int counter = 0;
-}
-
 public class Creature : MonoBehaviour
 {
     public List<IAbility> abilities;
@@ -24,18 +19,17 @@ public class Creature : MonoBehaviour
     public FoodBaseMaster foodBaseMaster;
     public int pos;
 
+    public void SetPos(int pos)
+    {
+        this.pos = pos;
+    }
+
     public void Initialize()
     {
         foodBaseMaster = FoodBaseMaster.Instance;
         abilities = new List<IAbility>();
         abilityCards = new List<GameObject>();
         foodTokens = new List<GameObject>();
-    }
-
-    public void SetPos()
-    {
-        pos = CardHandCounter.counter;
-        CardHandCounter.counter += 1;
     }
 
     public void AddAbilityToOpponent(GameObject abilityCard, IAbility ability)
@@ -118,7 +112,29 @@ public class Creature : MonoBehaviour
             Player playerScript = transform.parent.transform.parent.GetComponent<Player>();
             playerScript.DestroyCreature(victimCreature);
             Destroy(victimCreature);
+
+            Creature targetCreature = victimCreature.GetComponent<Creature>();
+            var victimParent = victimCreature.transform.parent.transform.parent;
+            Player player = victimParent.GetComponent<Player>();
+
+            Body b = new Body(targetCreature.pos, 0, this.pos, false);
+            Client.Instance.SendInfo(GameMaster.Instance.current.ID,
+                                     player.ID,
+                                     Actions.attack,
+                                     b);
         }
+    }
+
+    public void AttackOpponent(GameObject victimCreature)
+    {
+        FeedBlue(2);
+        TransformController transformController = this.GetComponent<TransformController>();
+        transformController.DisableHighLiteRed();
+        canAttack = false;
+
+        Player playerScript = transform.parent.transform.parent.GetComponent<Player>();
+        playerScript.DestroyCreature(victimCreature);
+        Destroy(victimCreature);
     }
 
     public bool CanEat(GameObject victimCreature)
@@ -157,6 +173,23 @@ public class Creature : MonoBehaviour
         foodTokens.Add(foodToken);
 
         foodToken.transform.SetParent(transform, true);
+
+        Body b = new Body(-1, -1, pos, false);
+        b.feed = 0;
+        Client.Instance.SendInfo(GameMaster.Instance.current.ID,
+                                 GameMaster.Instance.roomId,
+                                 Actions.feed,
+                                 b);
+    }
+
+    public void FeedRedOpponent(GameObject foodToken)
+    {
+        Debug.Log("feed opponent red");
+        foodTokens.Add(foodToken);
+        foodToken.transform.SetParent(transform, true);
+        foodToken.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z + 3 + 2.5f);
+
+        foodToken.transform.SetParent(transform, true);
     }
 
     public void FeedBlue(int count)
@@ -172,9 +205,27 @@ public class Creature : MonoBehaviour
 
                 blueToken.transform.SetParent(transform, true);
                 blueToken.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z + 3 + i * 2.5f);
+
+                /*Body b = new Body(-1, -1, pos, false);
+                b.feed = 1;
+                Client.Instance.SendInfo(GameMaster.Instance.current.ID,
+                                         GameMaster.Instance.roomId,
+                                         Actions.feed,
+                                         b);*/
             }
             else break;
             //foodController.MoveTo(transform.position);
         }
+    }
+
+    public void FeedBlue()
+    {
+        var blueToken = foodBaseMaster.GetBlueFood();
+        foodTokens.Add(blueToken);
+
+        Food foodController = blueToken.GetComponent<Food>();
+
+        blueToken.transform.SetParent(transform, true);
+        blueToken.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z - 1.5f);
     }
 }

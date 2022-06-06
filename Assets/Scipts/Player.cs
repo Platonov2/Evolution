@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, IPlayer
     public bool isHost;
     public string playerName;
     public int playerNumber;
+    public int counter = 0;
 
     public int creatureCount;
 
@@ -25,6 +26,14 @@ public class Player : MonoBehaviour, IPlayer
     void Update()
     {
         creatureCount = creatures.Count;
+    }
+
+    public int GetPos()
+    {
+        var pos = this.counter;
+        this.counter += 1;
+
+        return pos;
     }
 
     public void DrawCardsToPlayer(int numberOfCards)
@@ -114,10 +123,21 @@ public class Player : MonoBehaviour, IPlayer
 
         var creatures = this.transform.Find("Creatures");
 
-        Transform parenCard = creatures.transform.GetChild(parent);
+        foreach (Transform parentCard in creatures.transform)
+        {
+            Card targetCard = parentCard.gameObject.GetComponent<Card>();
+            Creature creature = targetCard.GetComponent<Creature>();
+            if (creature.pos == parent)
+            {
+                creature.AddAbilityToOpponent(abilityCard, ability);
+                break;
+            }
+        }
+
+        /*Transform parenCard = creatures.transform.GetChild(parent);
         Card targetCard = parenCard.gameObject.GetComponent<Card>();
         Creature creature = targetCard.GetComponent<Creature>();
-        creature.AddAbilityToOpponent(abilityCard, ability);
+        creature.AddAbilityToOpponent(abilityCard, ability);*/
     }
 
     private void DrawCreatureToOpponent(int cardID)
@@ -145,6 +165,7 @@ public class Player : MonoBehaviour, IPlayer
         sourceCard.AddComponent<Creature>();
         Creature creatureScript = sourceCard.GetComponent<Creature>();
         creatureScript.Initialize();
+        creatureScript.SetPos(GetPos());
         sourceCard.transform.SetParent(creaturesField.transform, true);
 
         Debug.Log("Created opponent creature");
@@ -162,7 +183,7 @@ public class Player : MonoBehaviour, IPlayer
         sourceCard.AddComponent<Creature>();
         Creature creatureScript = sourceCard.GetComponent<Creature>();
         creatureScript.Initialize();
-        creatureScript.SetPos();
+        creatureScript.SetPos(GetPos());
         sourceCard.transform.SetParent(creaturesField.transform, true);
         sourceCard.transform.SetSiblingIndex(creatures.Count - 2);
 
@@ -190,5 +211,79 @@ public class Player : MonoBehaviour, IPlayer
         creatures.Add(emptyCreature);
         emptyCreature.transform.position = creaturesField.transform.position;
         emptyCreature.transform.SetParent(creaturesField.transform, true);
+    }
+
+    public void FeedOpponentCreature(int feed, int parent)
+    {
+        Debug.Log("feed opponent " + parent);
+        var creatures = this.transform.Find("Creatures");
+
+        Transform parenCard = creatures.transform.GetChild(parent);
+        Creature creature = parenCard.GetComponent<Creature>();
+        if (feed == 0)
+        {
+            creature.FeedRedOpponent(FoodBaseMaster.Instance.GetRedFood());
+        } else
+        {
+
+        }
+    }
+
+    public void AttackCreature(int predator, int target, string playerID)
+    {
+        Debug.Log("attack creature " + target + " in player " + playerID);
+        var creatures = this.transform.Find("Creatures");
+        Creature predatorCreature = new Creature();
+
+        foreach (Transform predatorCard in creatures.transform)
+        {
+            Creature pCreature = predatorCard.GetComponent<Creature>();
+            if (pCreature.pos == predator)
+            {
+                predatorCreature = pCreature;
+                break;
+            }
+        }
+
+        if (playerID == ID)
+        {
+            foreach (Transform targetCard in creatures.transform)
+            {
+                Creature targetCreature = targetCard.GetComponent<Creature>();
+                if (targetCreature == null)
+                {
+                    continue;
+                }
+                if (targetCreature.pos == target)
+                {
+                    predatorCreature.AttackOpponent(targetCard.gameObject);
+                    break;
+                }
+            }
+            /*Transform targetCard = creatures.transform.GetChild(target);
+            Creature targetCreature = targetCard.GetComponent<Creature>();
+            predatorCreature.AttackOpponent(targetCard.gameObject);*/
+        } else
+        {
+            Player player = GameMaster.Instance.FindPlayer(playerID);
+            var Oppcreatures = player.transform.Find("Creatures");
+            foreach (Transform targetCard in Oppcreatures.transform)
+            {
+                Creature targetCreature = targetCard.GetComponent<Creature>();
+                if (targetCreature == null) 
+                {
+                    continue;
+                }
+                if (targetCreature.pos == target)
+                {
+                    predatorCreature.AttackOpponent(targetCard.gameObject);
+                    break;
+                }
+            }
+            
+            /*Transform targetCard = Oppcreatures.transform.GetChild(target);
+            Creature targetCreature = targetCard.GetComponent<Creature>();
+            predatorCreature.AttackOpponent(targetCard.gameObject);*/
+        }
     }
 }

@@ -45,10 +45,15 @@ public class Message
 [Serializable]
 public class Body
 {
+    // target
     public int card_id;
+    // for attack 0 - self creature, 1 - opponent creature
     public int card_type;
+    // predator
     public int card_parent;
     public bool is_main_ability;
+    // 0 - red  1 - blue
+    public int feed;
 
     public Body(int cardID, int cardType, int cardParent, bool is_main_ability)
     {

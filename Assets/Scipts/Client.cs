@@ -114,7 +114,9 @@ public class Client : MonoBehaviour
             if (GameMaster.Instance.current.ID == "")
             {
                 GameMaster.Instance.current.ID = mes.player_id;
-            } else
+            }
+
+            if (GameMaster.Instance.current.ID != mes.player_id && GameMaster.Instance.current.ID != "")
             {
                 Debug.Log("setting id to opponent " + mes.player_id);
                 GameMaster.Instance.player1.ID = mes.player_id;
@@ -162,6 +164,18 @@ public class Client : MonoBehaviour
         if (mes.action == Actions.placeCard && mes.player_id != GameMaster.Instance.current.ID)
         {
             GameMaster.Instance.player1.PlaceCardToOpponent(mes.body.card_id, mes.body.card_parent, mes.body.card_type, mes.body.is_main_ability);
+            return;
+        }
+
+        if (mes.action == Actions.feed && mes.player_id != GameMaster.Instance.current.ID)
+        {
+            GameMaster.Instance.player1.FeedOpponentCreature(mes.body.feed, mes.body.card_parent);
+            return;
+        }
+
+        if (mes.action == Actions.attack && mes.player_id != GameMaster.Instance.current.ID)
+        {
+            GameMaster.Instance.player1.AttackCreature(mes.body.card_parent, mes.body.card_id, mes.room_id);
             return;
         }
     }
