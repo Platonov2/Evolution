@@ -150,12 +150,6 @@ public class Client : MonoBehaviour
             return;
         }
 
-        if (mes.action == Actions.activatePlayer)
-        {
-            Debug.Log("activate player");
-            return;
-        }
-
         if (mes.action == Actions.takeCard)
         {
             GameMaster.Instance.TakeCards(mes.player_id, mes.cards_num);
@@ -177,6 +171,38 @@ public class Client : MonoBehaviour
         {
             GameMaster.Instance.player1.AttackCreature(mes.body.card_parent, mes.body.card_id, mes.room_id);
             return;
+        }
+
+        if (mes.action == Actions.activatePlayer)
+        {
+            var creatures = GameMaster.Instance.current.transform.Find("Creatures");
+            if (mes.player_id != GameMaster.Instance.current.ID)
+            {
+                foreach (Transform child in creatures)
+                {
+                    if (child.gameObject.layer == LayerMask.NameToLayer("EmptyCreature") || child.gameObject.layer == LayerMask.NameToLayer("EmptyCreatureBlocked"))
+                    {
+                        child.gameObject.layer = LayerMask.NameToLayer("EmptyCreatureBlocked");
+                    } else
+                    {
+                        child.gameObject.layer = LayerMask.NameToLayer("YourCreatureBlocked");
+                    }
+                }
+                creatures.gameObject.layer = LayerMask.NameToLayer("EmptyCreatureBlocked");
+            } else
+            {
+                foreach (Transform child in creatures)
+                {
+                    if (child.gameObject.layer == LayerMask.NameToLayer("EmptyCreatureBlocked") || child.gameObject.layer == LayerMask.NameToLayer("EmptyCreature"))
+                    {
+                        child.gameObject.layer = LayerMask.NameToLayer("EmptyCreature");
+                    } else
+                    {
+                        child.gameObject.layer = LayerMask.NameToLayer("YourCreature");
+                    }
+                }
+                creatures.gameObject.layer = LayerMask.NameToLayer("YourCreaturesField");
+            }
         }
     }
 

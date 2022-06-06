@@ -190,6 +190,12 @@ MonoBehaviour:
   yourCreatureLayer:
     serializedVersion: 2
     m_Bits: 256
+  yourCreatureBlockedLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  emptyCreatureBlockedLayer:
+    serializedVersion: 2
+    m_Bits: 0
   opponentCreatureLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -878,6 +884,7 @@ MonoBehaviour:
   isHost: 0
   playerName: 
   playerNumber: 0
+  counter: 0
   creatureCount: 0
 --- !u!1 &657297992
 GameObject:
@@ -1111,6 +1118,7 @@ MonoBehaviour:
   isHost: 0
   playerName: 
   playerNumber: 1
+  counter: 0
   creatureCount: 0
 --- !u!1 &897889065
 GameObject:
@@ -2178,6 +2186,12 @@ MonoBehaviour:
   yourCreatureLayer:
     serializedVersion: 2
     m_Bits: 256
+  yourCreatureBlockedLayer:
+    serializedVersion: 2
+    m_Bits: 131072
+  emptyCreatureBlockedLayer:
+    serializedVersion: 2
+    m_Bits: 262144
   opponentCreatureLayer:
     serializedVersion: 2
     m_Bits: 512

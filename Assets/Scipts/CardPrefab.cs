@@ -10,6 +10,7 @@ public class CardPrefab : MonoBehaviour
     public LayerMask yourCreaturesFieldLayer;
     public LayerMask yourCreatureLayer;
     public LayerMask yourCreatureBlockedLayer;
+    public LayerMask emptyCreatureBlockedLayer;
     public LayerMask opponentCreatureLayer;
     public LayerMask yourHandCardLayer;
     public LayerMask emptyCreatureLayer;

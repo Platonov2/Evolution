@@ -22,8 +22,8 @@ TagManager:
   - Collision
   - EatenFood
   - Ability
-  - YourCreaturesBlockField
-  - 
+  - YourCreatureBlocked
+  - EmptyCreatureBlocked
   - 
   - 
   - 
