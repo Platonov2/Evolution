@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class Lobby : MonoBehaviour
 {
+    public GameObject canvasMain;
+    public GameObject players;
     public GameObject panelListPlayers;
     public GameObject player0;
     public GameObject startGame;
@@ -54,5 +56,12 @@ public class Lobby : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void closeLobby()
+    {
+        //Debug.Log("close");
+        canvasMain.gameObject.SetActive(false);
+        players.gameObject.SetActive(true);
     }
 }
